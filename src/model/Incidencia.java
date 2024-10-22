@@ -1,8 +1,9 @@
+package model;
+
 import java.util.ArrayList;
 
 public class Incidencia {
     private int idIncidencia;
-    private static int numIncidencia = 1;
     private String descripcion;
     private Usuario usuario;
     private Proyecto proyecto;
@@ -11,20 +12,16 @@ public class Incidencia {
     private double tiempoInvertido;
     private ArrayList<Movimiento> movimientos;
 
-    // Constructor por defecto sin Usuario ni Proyecto
+    // Constructor por defecto sin model.Usuario ni model.Proyecto
     public Incidencia() {
-        idIncidencia = numIncidencia;
-        incrementarIdIncidencia();
         this.descripcion = "";
         this.estado = "Nuevo";
         this.estimacionHoras = 0;
         this.movimientos = new ArrayList<>();
     }
 
-    // Constructor para crear incidencia desde Proyecto
+    // Constructor para crear incidencia desde model.Proyecto
     public Incidencia(String descripcion, Usuario usuario, double estimacionHoras) {
-        this.idIncidencia = numIncidencia;
-        incrementarIdIncidencia();
         this.descripcion = descripcion;
         this.usuario = usuario;
         this.estado = "Nuevo";
@@ -32,12 +29,20 @@ public class Incidencia {
         this.movimientos = new ArrayList<>();
     }
 
+    // Constructor con estado de incidencia diferente a "Nuevo"
     public Incidencia(String descripcion, double estimacionHoras, String estado) {
-        idIncidencia = numIncidencia;
-        incrementarIdIncidencia();
         this.descripcion = descripcion;
-        this.estado = "Nuevo";
+        this.estado = estado;
         this.estimacionHoras = estimacionHoras;
+        this.movimientos = new ArrayList<>();
+    }
+
+    // Constructor con tiempo ya invertido
+    public Incidencia(String descripcion, double estimacionHoras, String estado, double tiempoInvertido) {
+        this.descripcion = descripcion;
+        this.estado = estado;
+        this.estimacionHoras = estimacionHoras;
+        this.tiempoInvertido = tiempoInvertido;
         this.movimientos = new ArrayList<>();
     }
 
@@ -62,12 +67,12 @@ public class Incidencia {
         this.estado = "Cerrado";
     }
 
-    public void incrementarIdIncidencia() {
-        numIncidencia++;
-    }
-
     public int getIdIncidencia() {
         return idIncidencia;
+    }
+
+    public void setIdIncidencia(int idIncidencia) {
+        this.idIncidencia = idIncidencia;
     }
 
     public ArrayList<Movimiento> getMovimientos() {
@@ -76,5 +81,33 @@ public class Incidencia {
 
     public void setMovimientos(ArrayList<Movimiento> movimientos) {
         this.movimientos = movimientos;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public double getEstimacionHoras() {
+        return estimacionHoras;
+    }
+
+    public void setEstimacionHoras(double estimacionHoras) {
+        this.estimacionHoras = estimacionHoras;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

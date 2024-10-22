@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 
 public class Proyecto {
@@ -6,7 +8,6 @@ public class Proyecto {
     private ArrayList<Incidencia> incidencias;
 
     public Proyecto() {
-        this.idProyecto = 0;
         this.nombreProyecto = "";
         this.incidencias = new ArrayList<>();
     }
@@ -16,7 +17,15 @@ public class Proyecto {
         this.incidencias = new ArrayList<>();
     }
 
-    public void agregarIncidencia(Incidencia incidencia) {
-        this.incidencias.add(incidencia);
+    public void agregarIncidencia(int idIncidencia, String descripcionIncidencia, Usuario usuario, double estimacionHoras) {
+        this.incidencias.add(new Incidencia(descripcionIncidencia, usuario, estimacionHoras));
+    }
+
+    public int getIdProyecto() {
+        return idProyecto;
+    }
+
+    public void setIdProyecto(int idProyecto) {
+        this.idProyecto = idProyecto;
     }
 }

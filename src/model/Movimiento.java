@@ -1,6 +1,9 @@
+package model;
+
 import java.util.Date;
 
 public class Movimiento {
+    private int idMovimiento;
     private String estadoAnterior;
     private String estadoNuevo;
     private Date fechaCambio;
