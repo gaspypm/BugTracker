@@ -31,29 +31,26 @@ public class ReporteIncidencias extends JPanel {
         contenido.addColumn("Descripción");
         contenido.addColumn("Estimación Horas");
         contenido.addColumn("Estado");
+        contenido.addColumn("Tiempo Invertido");
+        contenido.addColumn("Usuario");
 
         try {
             ArrayList<Incidencia> incidencias = service.buscarTodos();
-            for(Incidencia incidencia:incidencias)
-            {
-                Object [] fila= new Object[4];
-                fila[0]= incidencia.getIdIncidencia();
-                fila[1]= incidencia.getDescripcion();
-                fila[2]=incidencia.getEstimacionHoras();
-                fila[3]=incidencia.getEstado();
+            for(Incidencia incidencia:incidencias) {
+                Object [] fila= new Object[6];
+                fila[0] = incidencia.getIdIncidencia();
+                fila[1] = incidencia.getDescripcion();
+                fila[2] = incidencia.getEstimacionHoras();
+                fila[3] = incidencia.getEstado();
+                fila[4] = incidencia.getTiempoInvertido();
+                fila[5] = incidencia.getUsuario().getNombreUsuario();
+
                 contenido.addRow(fila);
             }
         }
-        catch ( DAOException e)
-        {
+        catch ( DAOException e) {
             JOptionPane.showMessageDialog(null, "Error");
         }
         add(scrollPane, BorderLayout.CENTER);
     }
-    /*
-
-
-
-     */
-
 }

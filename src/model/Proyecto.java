@@ -28,4 +28,20 @@ public class Proyecto {
     public void setIdProyecto(int idProyecto) {
         this.idProyecto = idProyecto;
     }
+
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
+    }
+
+    public ArrayList<Incidencia> getIncidencias() {
+        return incidencias;
+    }
+
+    public void setIncidencias(ArrayList<Incidencia> incidencias) {
+        this.incidencias = incidencias;
+    }
 }

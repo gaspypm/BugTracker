@@ -12,9 +12,10 @@ public class ServiceIncidencia {
     public ServiceIncidencia() {
         daoIncidencia = new DAOIncidencia();
     }
-    public void guardar(Incidencia elemento) throws ServiceException {
+
+    public void guardar(Incidencia incidencia) throws ServiceException {
         try {
-            daoIncidencia.guardar(elemento);
+            daoIncidencia.guardar(incidencia);
         }
         catch(DAOException d) {
             throw new ServiceException("Error");
@@ -29,10 +30,15 @@ public class ServiceIncidencia {
         return daoIncidencia.buscar(id);
     }
 
-    /*public void modificar(Incidencia elemento) {
-        daoIncidencia.modificar(elemento);
+    public int obtenerUltimoID() throws DAOException {
+        return daoIncidencia.obtenerUltimoID();
     }
-    public void eliminar(int id) {
+
+    public void modificar(Incidencia incidencia) throws DAOException {
+        daoIncidencia.modificar(incidencia);
+    }
+
+    public void eliminar(int id) throws DAOException {
         daoIncidencia.eliminar(id);
-    }*/
+    }
 }

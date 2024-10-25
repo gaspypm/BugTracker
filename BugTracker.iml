@@ -17,5 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="h2-2.3.232" level="project" />
+    <orderEntry type="library" name="io.github.cdimascio.java.dotenv" level="project" />
   </component>
 </module>

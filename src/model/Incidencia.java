@@ -14,6 +14,7 @@ public class Incidencia {
 
     // Constructor por defecto sin model.Usuario ni model.Proyecto
     public Incidencia() {
+        this.idIncidencia = 0;
         this.descripcion = "";
         this.estado = "Nuevo";
         this.estimacionHoras = 0;
@@ -22,6 +23,7 @@ public class Incidencia {
 
     // Constructor para crear incidencia desde model.Proyecto
     public Incidencia(String descripcion, Usuario usuario, double estimacionHoras) {
+        this.idIncidencia = 0;
         this.descripcion = descripcion;
         this.usuario = usuario;
         this.estado = "Nuevo";
@@ -31,6 +33,7 @@ public class Incidencia {
 
     // Constructor con estado de incidencia diferente a "Nuevo"
     public Incidencia(String descripcion, double estimacionHoras, String estado) {
+        this.idIncidencia = 0;
         this.descripcion = descripcion;
         this.estado = estado;
         this.estimacionHoras = estimacionHoras;
@@ -39,6 +42,7 @@ public class Incidencia {
 
     // Constructor con tiempo ya invertido
     public Incidencia(String descripcion, double estimacionHoras, String estado, double tiempoInvertido) {
+        this.idIncidencia = 0;
         this.descripcion = descripcion;
         this.estado = estado;
         this.estimacionHoras = estimacionHoras;
@@ -109,5 +113,25 @@ public class Incidencia {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public double getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(double tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Proyecto getProyecto() {
+        return proyecto;
+    }
+
+    public void setProyecto(Proyecto proyecto) {
+        this.proyecto = proyecto;
     }
 }
