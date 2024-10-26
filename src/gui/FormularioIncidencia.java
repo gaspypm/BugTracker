@@ -16,6 +16,7 @@ import java.io.IOException;
 public class FormularioIncidencia extends JPanel {
     ServiceIncidencia serviceIncidencia;
     ServiceUsuario serviceUsuario;
+    Usuario usuario;
     PanelManager panel;
     JPanel formularioIncidencia;
     JLabel JLabelVacio;
@@ -33,6 +34,7 @@ public class FormularioIncidencia extends JPanel {
     JButton JButtonReportar;
     JButton JButtonMostrarIncidencias;
     JButton JButtonModificar;
+    JButton JButtonCerrar;
     JButton JButtonBuscar;
     JLabel JLabelMensaje;
 
@@ -45,6 +47,7 @@ public class FormularioIncidencia extends JPanel {
         // Inicializo todos los elementos de la ventana
         serviceIncidencia = new ServiceIncidencia();
         serviceUsuario = new ServiceUsuario();
+        usuario = new Usuario();
         formularioIncidencia = new JPanel();
         formularioIncidencia.setLayout(new GridLayout(9,2));
         JLabelVacio = new JLabel("Bienvenido, " + panel.getUsuarioActual().getNombreUsuario());
@@ -61,9 +64,20 @@ public class FormularioIncidencia extends JPanel {
         JTextFieldTiempoInvertido = new JTextField();
         JButtonReportar = new JButton("Reportar incidencia");
         JButtonModificar = new JButton("Modificar incidencia");
+        JButtonCerrar = new JButton("Cerrar incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonBuscar = new JButton("Buscar incidencia");
         JLabelMensaje = new JLabel("");
+
+        // Guardo el usuario actual
+        try {
+            usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
+            usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
+            usuario.setPermisos(serviceUsuario.obtenerPermisos(usuario.getIdUsuario()));
+        }
+        catch (ServiceException ex) {
+            throw new RuntimeException(ex);
+        }
 
         // Estilos
         formularioIncidencia.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -71,7 +85,8 @@ public class FormularioIncidencia extends JPanel {
         try {
             Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
             JButtonCerrarSesion.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -91,6 +106,7 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia.add(JButtonReportar);
         formularioIncidencia.add(JButtonBuscar);
         formularioIncidencia.add(JButtonModificar);
+        formularioIncidencia.add(JButtonCerrar);
         formularioIncidencia.add(JButtonMostrarIncidencias);
         formularioIncidencia.add(JLabelMensaje);
 
@@ -98,14 +114,20 @@ public class FormularioIncidencia extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Incidencia incidencia = new Incidencia();
-                Usuario usuario = new Usuario();
+
+                if (!usuario.getPermisos().contains(1)) {
+                    JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                    return;
+                }
 
                 if (!JTextFieldID.getText().isEmpty()) {
                     incidencia.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
-                } else {
+                }
+                else {
                     try {
                         incidencia.setIdIncidencia(serviceIncidencia.obtenerUltimoID() + 1);
-                    } catch (DAOException ex) {
+                    }
+                    catch (DAOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -118,20 +140,13 @@ public class FormularioIncidencia extends JPanel {
                 if (!JTextFieldTiempoInvertido.getText().isEmpty())
                     incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
 
-
-                try {
-                    usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
-                    usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
-                    incidencia.setUsuario(usuario);
-                } catch (ServiceException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+                incidencia.setUsuario(usuario);
                 try {
                     serviceIncidencia.guardar(incidencia);
                     JLabelMensaje.setForeground(Color.GREEN);
                     JLabelMensaje.setText("Incidencia guardada con éxito");
-                } catch (ServiceException s) {
+                }
+                catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
@@ -149,7 +164,8 @@ public class FormularioIncidencia extends JPanel {
                     JTextFieldDescripcion.setText(i.getDescripcion());
                     JTextFieldEstimacionHoras.setText(String.valueOf(i.getEstimacionHoras()));
                     JTextFieldEstado.setText(i.getEstado());
-                } catch (DAOException s) {
+                }
+                catch (DAOException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
@@ -161,19 +177,40 @@ public class FormularioIncidencia extends JPanel {
                 if (JTextFieldID.getText().isEmpty()) {
                     JLabelMensaje.setForeground(Color.RED);
                     JLabelMensaje.setText("Ingrese un ID");
+                    return;
                 }
                 try {
                     Incidencia i = new Incidencia();
                     i.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
                     i.setDescripcion(JTextFieldDescripcion.getText());
-                    i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
-                    i.setEstado(JTextFieldEstado.getText());
+
+                    if (!JTextFieldEstimacionHoras.getText().isEmpty())
+                        i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
+
+                    if (usuario.getPermisos().contains(2)) {
+                        if (!JTextFieldEstado.getText().isEmpty())
+                            i.setEstado(JTextFieldEstado.getText());
+                    }
+                    else if (!JTextFieldEstado.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                        return;
+                    }
+
+                    if (usuario.getPermisos().contains(3)) {
+                        if (!JTextFieldTiempoInvertido.getText().isEmpty())
+                            i.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
+                    }
+                    else if (!JTextFieldTiempoInvertido.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                        return;
+                    }
 
                     serviceIncidencia.modificar(i);
 
                     JLabelMensaje.setForeground(Color.GREEN);
                     JLabelMensaje.setText("Incidencia modificada con éxito");
-                } catch (DAOException s) {
+                }
+                catch (DAOException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo modificar");
                 }
             }
@@ -184,7 +221,8 @@ public class FormularioIncidencia extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panel.mostrar(panel.getReporteIncidencias());
-                } catch (ServiceException s) {
+                }
+                catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
             }
@@ -195,7 +233,8 @@ public class FormularioIncidencia extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panel.mostrar(panel.getInicioSesion());
-                } catch (ServiceException s) {
+                }
+                catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
                 }
             }

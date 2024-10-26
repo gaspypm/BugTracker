@@ -5,11 +5,16 @@ import java.util.ArrayList;
 public class Administrador extends Usuario {
     private ArrayList<Proyecto> proyectos;
 
-    public Administrador(String nombreUsuario) {
-        super(nombreUsuario);
+    public Administrador() {
+        this.proyectos = new ArrayList<>();
     }
 
-    public void crearUsuario(String nombreUsuario, ArrayList<String> permisos) {
+    public Administrador(String nombreUsuario) {
+        super(nombreUsuario);
+        this.proyectos = new ArrayList<>();
+    }
+
+    public void crearUsuario(String nombreUsuario, ArrayList<Integer> permisos) {
         Usuario usuario = new Usuario(nombreUsuario, permisos);
     }
 

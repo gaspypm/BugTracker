@@ -4,7 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class DAOAdministrador {
+public class DAOAdministrador extends DAOUsuario {
     Dotenv dotenv = Dotenv.load();
     String DB_JDBC_DRIVER = dotenv.get("DB_JDBC_DRIVER");
     String DB_URL = dotenv.get("DB_URL");
@@ -36,35 +36,6 @@ public class DAOAdministrador {
         }
     }
 
-    public ArrayList<Integer> obtenerPermisos(int idUsuario) throws DAOException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ArrayList<Integer> permisos = new ArrayList<>();
-        try {
-            Class.forName(DB_JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("SELECT ID_PERMISO FROM USUARIO_PERMISO WHERE ID_USUARIO = ?");
-            preparedStatement.setInt(1, idUsuario);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            while(rs.next()) {
-                permisos.add(rs.getInt("ID_PERMISO"));
-            }
-            return permisos;
-
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new DAOException("Error al acceder a la base de datos");
-        } finally {
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                throw new DAOException("Error al cerrar la conexión");
-            }
-        }
-    }
-
     public void editarPermisos(int idUsuario, ArrayList<Integer> permisosSeleccionados) throws DAOException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -76,7 +47,7 @@ public class DAOAdministrador {
 
             for (int idPermiso : permisosSeleccionados) {
                 if (!permisos.contains(idPermiso)) {
-                    preparedStatement = connection.prepareStatement("INSERT INTO USUARIO_PERMISO (ID_USUARIO, ID_PERMISO) VALES (?, ?)");
+                    preparedStatement = connection.prepareStatement("INSERT INTO USUARIO_PERMISO (ID_USUARIO, ID_PERMISO) VALUES (?, ?)");
                     preparedStatement.setInt(1, idUsuario);
                     preparedStatement.setInt(2, idPermiso);
 
@@ -86,7 +57,7 @@ public class DAOAdministrador {
             }
 
             for (int idPermiso : permisos) {
-                if (!permisos.contains(idPermiso)) {
+                if (!permisosSeleccionados.contains(idPermiso)) {
                     preparedStatement = connection.prepareStatement("DELETE FROM USUARIO_PERMISO WHERE ID_USUARIO = ? AND ID_PERMISO = ?");
                     preparedStatement.setInt(1, idUsuario);
                     preparedStatement.setInt(2, idPermiso);

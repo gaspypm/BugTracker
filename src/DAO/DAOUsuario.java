@@ -1,8 +1,13 @@
 package DAO;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import model.Administrador;
+import model.Incidencia;
+import model.Proyecto;
+import model.Usuario;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DAOUsuario {
     Dotenv dotenv = Dotenv.load();
@@ -92,5 +97,68 @@ public class DAOUsuario {
                 throw new DAOException("Error");
             }
         }
+    }
+
+    public ArrayList<Integer> obtenerPermisos(int idUsuario) throws DAOException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ArrayList<Integer> permisos = new ArrayList<>();
+        try {
+            Class.forName(DB_JDBC_DRIVER);
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            preparedStatement = connection.prepareStatement("SELECT ID_PERMISO FROM USUARIO_PERMISO WHERE ID_USUARIO = ?");
+            preparedStatement.setInt(1, idUsuario);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()) {
+                permisos.add(rs.getInt("ID_PERMISO"));
+            }
+            return permisos;
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new DAOException("Error al acceder a la base de datos");
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new DAOException("Error al cerrar la conexión");
+            }
+        }
+    }
+
+    public ArrayList<Usuario> buscarTodos() throws DAOException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        Usuario usuario = null;
+        Administrador administrador = null;
+        ArrayList<Usuario> usuarios = new ArrayList<>();
+
+        try {
+            Class.forName(DB_JDBC_DRIVER);
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+            preparedStatement = connection.prepareStatement("SELECT *  FROM USUARIO");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                if (rs.getString("TIPO") == "ADMINISTRADOR") {
+                    administrador = new Administrador();
+                    administrador.setIdUsuario(rs.getInt("ID_USUARIO"));
+                    administrador.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
+                    usuarios.add(administrador);
+                }
+                else {
+                    usuario = new Usuario();
+                    usuario.setIdUsuario(rs.getInt("ID_USUARIO"));
+                    usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
+                    usuarios.add(usuario);
+                }
+            }
+        }
+        catch (ClassNotFoundException | SQLException e) {
+            throw new DAOException("Ocurrió un error en la base de datos");
+        }
+        return usuarios;
     }
 }

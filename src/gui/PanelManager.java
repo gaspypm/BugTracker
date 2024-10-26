@@ -11,6 +11,7 @@ public class PanelManager {
     private MenuAdministrador menuAdministrador;
     private FormularioIncidencia formularioIncidencia;
     private ReporteIncidencias reporteIncidencias;
+    private EditorPermisos editorPermisos;
     private Usuario usuarioActual = new Usuario();
 
     JFrame jFrame;
@@ -36,6 +37,9 @@ public class PanelManager {
                 reporteIncidencias = new ReporteIncidencias(this);
                 mostrar(reporteIncidencias);
                 break;
+            case 5:
+                editorPermisos = new EditorPermisos(this);
+                mostrar(editorPermisos);
             default:
                 inicioSesion = new InicioSesion(this);
                 mostrar(inicioSesion);
@@ -67,6 +71,10 @@ public class PanelManager {
 
     public FormularioIncidencia getFormularioIncidencias() throws ServiceException {
         return formularioIncidencia = new FormularioIncidencia(this);
+    }
+
+    public EditorPermisos getEditorPermisos() throws ServiceException {
+        return editorPermisos = new EditorPermisos(this);
     }
 
     public Usuario getUsuarioActual() {

@@ -21,15 +21,6 @@ public class ServiceAdministrador {
         }
     }
 
-    public ArrayList<Integer> obtenerPermisos(int idUsuario) throws ServiceException {
-        try {
-            return daoAdministrador.obtenerPermisos(idUsuario);
-        }
-        catch(DAOException d) {
-            throw new ServiceException("Error");
-        }
-    }
-
     public void editarPermisos(int idUsuario, ArrayList<Integer> permisosSeleccionados) throws ServiceException {
         try {
             daoAdministrador.editarPermisos(idUsuario, permisosSeleccionados);

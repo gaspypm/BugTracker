@@ -5,10 +5,12 @@ import model.Usuario;
 import service.ServiceAdministrador;
 import service.ServiceException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class MenuAdministrador extends JPanel {
     PanelManager panel;
@@ -34,10 +36,16 @@ public class MenuAdministrador extends JPanel {
         JButtonCrearIncidencia = new JButton("Crear incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonEditarPermisosUsuario = new JButton("Editar permisos usuario");
-        JButtonCerrarSesion = new JButton("Cerrar sesión");
+        JButtonCerrarSesion = new JButton(" Cerrar sesión");
 
         // Estilos
         menuAdministrador.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        try {
+            Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
+            JButtonCerrarSesion.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Agrego elementos al panel
         menuAdministrador.add(JButtonCrearUsuario);
@@ -58,6 +66,11 @@ public class MenuAdministrador extends JPanel {
         JButtonEditarPermisosUsuario.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    panel.mostrar(panel.getEditorPermisos());
+                } catch (ServiceException s) {
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
             }
         });
 

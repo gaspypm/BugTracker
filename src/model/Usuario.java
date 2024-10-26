@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Usuario {
     private int idUsuario;
     private String nombreUsuario;
-    private ArrayList<String> permisos;
+    private ArrayList<Integer> permisos;
 
     public Usuario() {
         this.permisos = new ArrayList<>();
@@ -16,7 +16,7 @@ public class Usuario {
         this.permisos = new ArrayList<>();
     }
 
-    public Usuario(String nombreUsuario, ArrayList<String> permisos) {
+    public Usuario(String nombreUsuario, ArrayList<Integer> permisos) {
         this.nombreUsuario = nombreUsuario;
         this.permisos = new ArrayList<>(permisos);
     }
@@ -37,11 +37,11 @@ public class Usuario {
         this.nombreUsuario = nombreUsuario;
     }
 
-    public ArrayList<String> getPermisos() {
+    public ArrayList<Integer> getPermisos() {
         return permisos;
     }
 
-    public void setPermisos(ArrayList<String> permisos) {
+    public void setPermisos(ArrayList<Integer> permisos) {
         this.permisos = permisos;
     }
 }

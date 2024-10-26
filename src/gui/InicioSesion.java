@@ -73,8 +73,10 @@ public class InicioSesion extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panel.getUsuarioActual().setNombreUsuario("Invitado");
+                    panel.getUsuarioActual().setIdUsuario(0);
                     panel.mostrar(panel.getFormularioIncidencias());
-                } catch (ServiceException s) {
+                }
+                catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
             }
@@ -101,7 +103,8 @@ public class InicioSesion extends JPanel {
                     else {
                         JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
                     }
-                } catch (ServiceException ex) {
+                }
+                catch (ServiceException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos");
                 }
