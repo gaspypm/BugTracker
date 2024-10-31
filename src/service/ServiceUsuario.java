@@ -22,9 +22,9 @@ public class ServiceUsuario {
         }
     }
 
-    public String validarTipo(String tipo) throws ServiceException {
+    public String validarTipo(int id) throws ServiceException {
         try {
-            return daoUsuario.validarTipo(tipo);
+            return daoUsuario.validarTipo(id);
         }
         catch(DAOException d) {
             throw new ServiceException("Error");
@@ -52,6 +52,24 @@ public class ServiceUsuario {
     public ArrayList<Usuario> buscarTodos() throws ServiceException {
         try {
             return daoUsuario.buscarTodos();
+        }
+        catch (DAOException d) {
+            throw new ServiceException("Error");
+        }
+    }
+
+    public int obtenerUltimoID() throws ServiceException {
+        try {
+            return daoUsuario.obtenerUltimoID();
+        }
+        catch (DAOException d) {
+            throw new ServiceException("Error");
+        }
+    }
+
+    public Usuario buscar(int id) throws ServiceException {
+        try {
+            return daoUsuario.buscar(id);
         }
         catch (DAOException d) {
             throw new ServiceException("Error");

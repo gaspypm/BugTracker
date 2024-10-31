@@ -24,13 +24,13 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         int idIncidencia;
         serviceUsuario = new ServiceUsuario();
 
-        if (incidencia.getIdIncidencia() != 0) {
+        if (incidencia.getIdIncidencia() != 0)
             idIncidencia = incidencia.getIdIncidencia();
-        }
         else {
             try {
                 idIncidencia = obtenerUltimoID() + 1;
-            } catch (DAOException e) {
+            }
+            catch (DAOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -49,10 +49,12 @@ public class DAOIncidencia implements IDAO<Incidencia> {
 
             int i = preparedStatement.executeUpdate();
             System.out.println(i);
-        } catch (ClassNotFoundException|SQLException e) {
+        }
+        catch (ClassNotFoundException|SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
-        } finally {
+        }
+        finally {
             try {
                 preparedStatement.close();
             }
@@ -78,16 +80,17 @@ public class DAOIncidencia implements IDAO<Incidencia> {
 
             int i = preparedStatement.executeUpdate();
             System.out.println(i);
-
-        } catch (ClassNotFoundException | SQLException e) {
+        }
+        catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
-        } finally {
+        }
+        finally {
             try {
-                if (preparedStatement != null) {
+                if (preparedStatement != null)
                     preparedStatement.close();
-                }
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 e.printStackTrace();
                 throw new DAOException("Error al cerrar la conexión");
             }
@@ -101,17 +104,16 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("DELETE FROM INCIDENCIA WHERE ID=?");
+            preparedStatement = connection.prepareStatement("DELETE FROM INCIDENCIA WHERE ID_INCIDENCIA=?");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         }
-        catch (ClassNotFoundException|SQLException e)
-        {
+        catch (ClassNotFoundException|SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
         }
         finally {
-            try{
+            try {
                 preparedStatement.close();
             }
             catch(SQLException e)
@@ -131,7 +133,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("SELECT * FROM INCIDENCIA WHERE ID_INCIDENCIA=?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM INCIDENCIA WHERE ID_INCIDENCIA = ?");
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -193,8 +195,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 incidencias.add(incidencia);
             }
         }
-        catch (ClassNotFoundException | SQLException e)
-        {
+        catch (ClassNotFoundException | SQLException e) {
             throw new DAOException("Ocurrio un error en la base de datos");
         }
         return incidencias;
@@ -210,12 +211,39 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             preparedStatement = connection.prepareStatement("SELECT MAX(ID_INCIDENCIA) AS id FROM INCIDENCIA");
             ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next()) {
+            if (rs.next())
                 return rs.getInt("id");
-            } else
+            else
                 return 1;
+        }
+        catch (ClassNotFoundException|SQLException e) {
+            e.printStackTrace();
+            throw new DAOException("Error al acceder a la base de datos");
+        }
+        finally {
+            try {
+                preparedStatement.close();
+            }
+            catch(SQLException e) {
+                e.printStackTrace();
+                throw new DAOException("Error");
+            }
+        }
+    }
 
-        } catch (ClassNotFoundException|SQLException e) {
+    public void cerrar(Incidencia incidencia) throws DAOException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            Class.forName(DB_JDBC_DRIVER);
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET CERRADA = TRUE WHERE ID_INCIDENCIA = ?");
+            preparedStatement.setInt(1, incidencia.getIdIncidencia());
+
+            int i = preparedStatement.executeUpdate();
+            System.out.println(i);
+        }
+        catch (ClassNotFoundException|SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
         }

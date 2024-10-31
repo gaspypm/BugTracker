@@ -12,9 +12,9 @@ public class ServiceAdministrador {
         daoAdministrador = new DAOAdministrador();
     }
 
-    public boolean crearUsuario(String usuario, String contrasena, String tipo) throws ServiceException {
+    public void crearUsuario(int id, String usuario, char[] contrasena, String tipo) throws ServiceException {
         try {
-            return daoAdministrador.crearUsuario(usuario, contrasena, tipo);
+            daoAdministrador.crearUsuario(id, usuario, contrasena, tipo);
         }
         catch(DAOException d) {
             throw new ServiceException("Error");

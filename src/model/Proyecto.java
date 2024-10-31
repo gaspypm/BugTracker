@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Proyecto {
     private int idProyecto;
     private String nombreProyecto;
+    private Administrador administrador;
     private ArrayList<Incidencia> incidencias;
 
     public Proyecto() {
@@ -35,6 +36,14 @@ public class Proyecto {
 
     public void setNombreProyecto(String nombreProyecto) {
         this.nombreProyecto = nombreProyecto;
+    }
+
+    public Administrador getAdministrador() {
+        return administrador;
+    }
+
+    public void setAdministrador(Administrador administrador) {
+        this.administrador = administrador;
     }
 
     public ArrayList<Incidencia> getIncidencias() {

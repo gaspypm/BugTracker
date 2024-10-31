@@ -1,10 +1,7 @@
 package gui;
-import DAO.DAOException;
-import model.Incidencia;
-import model.Usuario;
-import service.ServiceAdministrador;
-import service.ServiceException;
 
+import model.Usuario;
+import service.ServiceException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -55,11 +52,14 @@ public class MenuAdministrador extends JPanel {
         menuAdministrador.add(JButtonCrearProyecto);
         menuAdministrador.add(JButtonCerrarSesion);
 
-
         JButtonCrearUsuario.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Usuario usuario = new Usuario();
+                try {
+                    panel.mostrar(panel.getFormularioUsuario());
+                } catch (ServiceException s) {
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
             }
         });
 
@@ -99,6 +99,11 @@ public class MenuAdministrador extends JPanel {
         JButtonCrearProyecto.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    panel.mostrar(panel.getFormularioProyecto());
+                } catch (ServiceException s) {
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
             }
         });
 

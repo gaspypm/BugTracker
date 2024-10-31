@@ -28,4 +28,44 @@ public class Movimiento {
         this.fechaCambio = new Date();
         this.usuario = usuario;
     }
+
+    public int getIdMovimiento() {
+        return idMovimiento;
+    }
+
+    public void setIdMovimiento(int idMovimiento) {
+        this.idMovimiento = idMovimiento;
+    }
+
+    public String getEstadoAnterior() {
+        return estadoAnterior;
+    }
+
+    public void setEstadoAnterior(String estadoAnterior) {
+        this.estadoAnterior = estadoAnterior;
+    }
+
+    public String getEstadoNuevo() {
+        return estadoNuevo;
+    }
+
+    public void setEstadoNuevo(String estadoNuevo) {
+        this.estadoNuevo = estadoNuevo;
+    }
+
+    public Date getFechaCambio() {
+        return fechaCambio;
+    }
+
+    public void setFechaCambio(Date fechaCambio) {
+        this.fechaCambio = fechaCambio;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

@@ -1,6 +1,5 @@
 package gui;
 
-import DAO.DAOException;
 import model.Usuario;
 import service.ServiceUsuario;
 import service.ServiceException;
@@ -18,7 +17,7 @@ public class InicioSesion extends JPanel {
     JLabel JLabelUsuario;
     JTextField JTextFieldUsuario;
     JLabel JLabelContrasena;
-    JPasswordField JTextFieldContrasena;
+    JPasswordField JPasswordFieldContrasena;
     JButton JButtonIniciarSesion;
     JButton JButtonInvitado;
 
@@ -35,7 +34,7 @@ public class InicioSesion extends JPanel {
         JLabelUsuario = new JLabel("Usuario");
         JTextFieldUsuario = new JTextField(20);
         JLabelContrasena = new JLabel("Contraseña");
-        JTextFieldContrasena = new JPasswordField(20);
+        JPasswordFieldContrasena = new JPasswordField(20);
         JButtonIniciarSesion = new JButton("Iniciar sesión");
         JButtonInvitado = new JButton("Invitado");
 
@@ -46,7 +45,7 @@ public class InicioSesion extends JPanel {
         gbc.gridy = 2;
         inicioSesion.add(JLabelContrasena, gbc);
         gbc.gridy = 3;
-        inicioSesion.add(JTextFieldContrasena, gbc);
+        inicioSesion.add(JPasswordFieldContrasena, gbc);
         gbc.gridy = 4;
         inicioSesion.add(JButtonIniciarSesion, gbc);
 
@@ -85,15 +84,17 @@ public class InicioSesion extends JPanel {
         JButtonIniciarSesion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String usuario = JTextFieldUsuario.getText();
-                String contrasena = new String(JTextFieldContrasena.getPassword());
+                Usuario usuarioAux = new Usuario();
+                usuarioAux.setNombreUsuario(JTextFieldUsuario.getText());
+                String contrasena = new String(JPasswordFieldContrasena.getPassword());
 
                 try {
-                    if (serviceUsuario.validarUsuario(usuario, contrasena)) {
-                        panel.getUsuarioActual().setNombreUsuario(usuario);
-                        panel.getUsuarioActual().setIdUsuario(serviceUsuario.obtenerID(usuario));
+                    if (serviceUsuario.validarUsuario(usuarioAux.getNombreUsuario(), contrasena)) {
+                        panel.getUsuarioActual().setNombreUsuario(usuarioAux.getNombreUsuario());
+                        panel.getUsuarioActual().setIdUsuario(serviceUsuario.obtenerID(usuarioAux.getNombreUsuario()));
+                        usuarioAux.setIdUsuario(serviceUsuario.obtenerID(usuarioAux.getNombreUsuario()));
 
-                        if (Objects.equals(serviceUsuario.validarTipo(usuario), "ADMINISTRADOR")) {
+                        if (serviceUsuario.validarTipo(panel.getUsuarioActual().getIdUsuario()).equals("ADMINISTRADOR")) {
                             panel.mostrar(panel.getMenuAdministrador());
                         }
                         else {

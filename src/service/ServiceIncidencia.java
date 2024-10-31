@@ -34,6 +34,10 @@ public class ServiceIncidencia {
         return daoIncidencia.obtenerUltimoID();
     }
 
+    public void cerrar(Incidencia incidencia) throws DAOException {
+        daoIncidencia.cerrar(incidencia);
+    }
+
     public void modificar(Incidencia incidencia) throws DAOException {
         daoIncidencia.modificar(incidencia);
     }

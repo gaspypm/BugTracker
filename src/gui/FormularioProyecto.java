@@ -1,10 +1,8 @@
 package gui;
-import DAO.DAOException;
 import model.Administrador;
-import model.Incidencia;
+import model.Proyecto;
 import model.Usuario;
-import service.ServiceAdministrador;
-import service.ServiceIncidencia;
+import service.ServiceProyecto;
 import service.ServiceException;
 import service.ServiceUsuario;
 
@@ -15,22 +13,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class FormularioUsuario extends JPanel {
-    ServiceAdministrador serviceAdministrador;
+public class FormularioProyecto extends JPanel {
+    ServiceProyecto serviceProyecto;
     ServiceUsuario serviceUsuario;
-    Usuario usuario;
+    Administrador administrador;
     PanelManager panel;
-    JPanel formularioUsuario;
+    JPanel formularioProyecto;
     JLabel JLabelVacio;
     JButton JButtonVolverAtras;
     JLabel JLabelID;
     JTextField JTextFieldID;
-    JLabel JLabelNombreUsuario;
-    JTextField JTextFieldNombreUsuario;
-    JLabel JLabelContrasena;
-    JPasswordField JPasswordFieldContrasena;
-    JLabel JLabelTipo;
-    JComboBox<String> JComboBoxTipos;
+    JLabel JLabelNombreProyecto;
+    JTextField JTextFieldNombreProyecto;
     JButton JButtonCrear;
     JButton JButtonMostrar;
     JButton JButtonModificar;
@@ -38,51 +32,43 @@ public class FormularioUsuario extends JPanel {
     JButton JButtonBuscar;
     JLabel JLabelMensaje;
 
-    public FormularioUsuario(PanelManager panel) {
+    public FormularioProyecto(PanelManager panel) {
         this.panel = panel;
         armarFormulario();
     }
 
     public void armarFormulario() {
         // Inicializo todos los elementos de la ventana
-        serviceAdministrador = new ServiceAdministrador();
+        serviceProyecto = new ServiceProyecto();
         serviceUsuario = new ServiceUsuario();
-        usuario = new Usuario();
-        formularioUsuario = new JPanel();
-        formularioUsuario.setLayout(new GridLayout(9,2));
+        administrador = new Administrador();
+        formularioProyecto = new JPanel();
+        formularioProyecto.setLayout(new GridLayout(5,2));
         JLabelVacio = new JLabel();
         JButtonVolverAtras = new JButton(" Volver atrás");
         JLabelID = new JLabel("ID");
         JTextFieldID = new JTextField(30);
-        JLabelNombreUsuario = new JLabel("Nombre de usuario");
-        JTextFieldNombreUsuario = new JTextField(30);
-        JLabelContrasena = new JLabel("Contraseña");
-        JPasswordFieldContrasena = new JPasswordField(30);
-        JLabelTipo = new JLabel("Tipo");
-        JComboBoxTipos = new JComboBox<>();
-        JButtonCrear = new JButton("Crear usuario");
-        JButtonModificar = new JButton("Modificar usuario");
-        JButtonEliminar = new JButton("Eliminar usuario");
-        JButtonMostrar = new JButton("Mostrar usuarios");
-        JButtonBuscar = new JButton("Buscar usuario");
+        JLabelNombreProyecto = new JLabel("Nombre del proyecto");
+        JTextFieldNombreProyecto = new JTextField(30);
+        JButtonCrear = new JButton("Crear proyecto");
+        JButtonModificar = new JButton("Modificar proyecto");
+        JButtonEliminar = new JButton("Eliminar proyecto");
+        JButtonMostrar = new JButton("Mostrar proyectos");
+        JButtonBuscar = new JButton("Buscar proyecto");
         JLabelMensaje = new JLabel("");
 
         // Guardo el usuario actual
         try {
-            usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
-            usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
-            usuario.setPermisos(serviceUsuario.obtenerPermisos(usuario.getIdUsuario()));
+            administrador.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
+            administrador.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
+            administrador.setPermisos(serviceUsuario.obtenerPermisos(administrador.getIdUsuario()));
         }
         catch (ServiceException ex) {
             throw new RuntimeException(ex);
         }
 
-        // Agrego tipos de usuarios a JComboBoxTipos
-        JComboBoxTipos.addItem("Regular");
-        JComboBoxTipos.addItem("Administrador");
-
         // Estilos
-        formularioUsuario.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        formularioProyecto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JLabelMensaje.setForeground(Color.GREEN);
         try {
             Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
@@ -93,19 +79,16 @@ public class FormularioUsuario extends JPanel {
         }
 
         // Agrego elementos al panel
-        formularioUsuario.add(JLabelVacio);
-        formularioUsuario.add(JButtonVolverAtras);
-        formularioUsuario.add(JLabelID);
-        formularioUsuario.add(JTextFieldID);
-        formularioUsuario.add(JLabelNombreUsuario);
-        formularioUsuario.add(JTextFieldNombreUsuario);
-        formularioUsuario.add(JLabelContrasena);
-        formularioUsuario.add(JPasswordFieldContrasena);
-        formularioUsuario.add(JLabelTipo);
-        formularioUsuario.add(JComboBoxTipos);
-        formularioUsuario.add(JButtonCrear);
-        formularioUsuario.add(JButtonBuscar);
-        formularioUsuario.add(JButtonModificar);
+        formularioProyecto.add(JLabelVacio);
+        formularioProyecto.add(JButtonVolverAtras);
+        formularioProyecto.add(JLabelID);
+        formularioProyecto.add(JTextFieldID);
+        formularioProyecto.add(JLabelNombreProyecto);
+        formularioProyecto.add(JTextFieldNombreProyecto);
+        formularioProyecto.add(JButtonCrear);
+        formularioProyecto.add(JButtonBuscar);
+        formularioProyecto.add(JButtonModificar);
+        formularioProyecto.add(JButtonEliminar);
 
         JButtonVolverAtras.addActionListener(new ActionListener() {
             @Override
@@ -122,39 +105,28 @@ public class FormularioUsuario extends JPanel {
         JButtonCrear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String tipo = null;
-                if (JComboBoxTipos.getSelectedItem().equals("Administrador")) {
-                    Administrador usuario = new Administrador();
-                    tipo = "ADMINISTRADOR";
-                }
-                else if (JComboBoxTipos.getSelectedItem().equals("Regular")) {
-                    Usuario usuario = new Usuario();
-                    tipo = "REGULAR";
-                }
-                else {
-                    JOptionPane.showMessageDialog(null,"Ingrese el tipo de usuario");
-                    return;
-                }
+                Proyecto proyecto = new Proyecto();
+                proyecto.setAdministrador(administrador);
 
                 if (!JTextFieldID.getText().isEmpty()) {
-                    usuario.setIdUsuario(Integer.parseInt(JTextFieldID.getText()));
+                    proyecto.setIdProyecto(Integer.parseInt(JTextFieldID.getText()));
                 }
                 else {
                     try {
-                        usuario.setIdUsuario(serviceUsuario.obtenerUltimoID() + 1);
+                        proyecto.setIdProyecto(serviceProyecto.obtenerUltimoID() + 1);
                     }
                     catch (ServiceException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
 
-                if (!JTextFieldNombreUsuario.getText().isEmpty())
-                    usuario.setNombreUsuario(JTextFieldNombreUsuario.getText());
+                if (!JTextFieldNombreProyecto.getText().isEmpty())
+                    proyecto.setNombreProyecto(JTextFieldNombreProyecto.getText());
 
                 try {
-                    serviceAdministrador.crearUsuario(usuario.getIdUsuario(), usuario.getNombreUsuario(), JPasswordFieldContrasena.getPassword(), tipo);
+                    serviceProyecto.guardar(proyecto);
                     JLabelMensaje.setForeground(Color.GREEN);
-                    JLabelMensaje.setText("Usuario creado con éxito");
+                    JLabelMensaje.setText("Proyecto creado con éxito");
                 }
                 catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo crear");
@@ -171,14 +143,8 @@ public class FormularioUsuario extends JPanel {
                     JLabelMensaje.setText("Ingrese un ID");
                 }
                 try {
-                    Usuario usuario = serviceUsuario.buscar(Integer.parseInt(JTextFieldID.getText()));
-                    JTextFieldNombreUsuario.setText(usuario.getNombreUsuario());
-                    if (serviceUsuario.validarTipo(usuario.getIdUsuario()).equals("ADMINISTRADOR")) {
-                        JComboBoxTipos.setSelectedItem("Administrador");
-                    }
-                    else if (serviceUsuario.validarTipo(usuario.getIdUsuario()).equals("REGULAR")) {
-                        JComboBoxTipos.setSelectedItem("Regular");
-                    }
+                    Proyecto proyecto = serviceProyecto.buscar(Integer.parseInt(JTextFieldID.getText()));
+                    JTextFieldNombreProyecto.setText(proyecto.getNombreProyecto());
                 }
                 catch (ServiceException ex) {
                     JOptionPane.showMessageDialog(null,"No se pudo buscar");
@@ -280,6 +246,6 @@ public class FormularioUsuario extends JPanel {
         });*/
 
         setLayout(new BorderLayout());
-        add(formularioUsuario, BorderLayout.CENTER);
+        add(formularioProyecto, BorderLayout.CENTER);
     }
 }

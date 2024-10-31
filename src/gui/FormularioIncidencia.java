@@ -74,6 +74,7 @@ public class FormularioIncidencia extends JPanel {
             usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
             usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
             usuario.setPermisos(serviceUsuario.obtenerPermisos(usuario.getIdUsuario()));
+            System.out.println("Permisos usuario " + usuario.getNombreUsuario() + ": " + usuario.getPermisos());
         }
         catch (ServiceException ex) {
             throw new RuntimeException(ex);
@@ -187,13 +188,13 @@ public class FormularioIncidencia extends JPanel {
                     if (!JTextFieldEstimacionHoras.getText().isEmpty())
                         i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
 
-                    if (usuario.getPermisos().contains(2)) {
-                        if (!JTextFieldEstado.getText().isEmpty())
+                    if (!JTextFieldEstado.getText().isEmpty()) {
+                        if (usuario.getPermisos().contains(2)) {
                             i.setEstado(JTextFieldEstado.getText());
-                    }
-                    else if (!JTextFieldEstado.getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
-                        return;
+                        } else if (!usuario.getPermisos().contains(2)) {
+                            JOptionPane.showMessageDialog(null, "No tienes permiso para cambiar el estado");
+                            return;
+                        }
                     }
 
                     if (usuario.getPermisos().contains(3)) {
@@ -201,7 +202,7 @@ public class FormularioIncidencia extends JPanel {
                             i.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
                     }
                     else if (!JTextFieldTiempoInvertido.getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                        JOptionPane.showMessageDialog(null, "No tienes permiso para cambiar el tiempo invertido");
                         return;
                     }
 
@@ -235,6 +236,30 @@ public class FormularioIncidencia extends JPanel {
                     panel.mostrar(panel.getInicioSesion());
                 }
                 catch (ServiceException s) {
+                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                }
+            }
+        });
+
+        JButtonCerrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Incidencia incidencia = new Incidencia();
+                if (!JTextFieldID.getText().isEmpty())
+                    incidencia.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
+                else
+                    JOptionPane.showMessageDialog(null,"Ingrese un ID");
+
+                try {
+                    if (usuario.getPermisos().contains(4)) {
+                        serviceIncidencia.cerrar(incidencia);
+                        JLabelMensaje.setForeground(Color.GREEN);
+                        JLabelMensaje.setText("Incidencia cerrada con éxito");
+                    }
+                    else
+                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                }
+                catch (DAOException ex) {
                     JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
                 }
             }

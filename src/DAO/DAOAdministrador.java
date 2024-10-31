@@ -11,19 +11,20 @@ public class DAOAdministrador extends DAOUsuario {
     String DB_USER = dotenv.get("DB_USER");
     String DB_PASSWORD = dotenv.get("DB_PASSWORD");
 
-    public boolean crearUsuario(String nombreUsuario, String contrasena, String tipo) throws DAOException {
+    public void crearUsuario(int id, String nombreUsuario, char[] contrasena, String tipo) throws DAOException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("INSERT INTO USUARIO (NOMBRE_USUARIO, CONTRASENIA, TIPO) VALUES (?,?,?)");
-            preparedStatement.setString(1, nombreUsuario);
-            preparedStatement.setString(2, contrasena);
-            preparedStatement.setString(3, tipo);
+            preparedStatement = connection.prepareStatement("INSERT INTO USUARIO (ID_USUARIO, NOMBRE_USUARIO, CONTRASENA, TIPO) VALUES (?,?,?,?)");
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, nombreUsuario);
+            preparedStatement.setString(3, String.valueOf(contrasena));
+            preparedStatement.setString(4, tipo);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            return rs.next();
+            int i = preparedStatement.executeUpdate();
+            System.out.println(i);
         } catch (ClassNotFoundException | SQLException e) {
             throw new DAOException("Error al acceder a la base de datos");
         } finally {
