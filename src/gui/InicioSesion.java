@@ -3,12 +3,10 @@ package gui;
 import model.Usuario;
 import service.ServiceUsuario;
 import service.ServiceException;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 
 public class InicioSesion extends JPanel {
     ServiceUsuario serviceUsuario;

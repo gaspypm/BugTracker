@@ -1,7 +1,7 @@
 package gui;
+
 import model.Administrador;
 import model.Proyecto;
-import model.Usuario;
 import service.ServiceProyecto;
 import service.ServiceException;
 import service.ServiceUsuario;
@@ -69,7 +69,7 @@ public class FormularioProyecto extends JPanel {
 
         // Estilos
         formularioProyecto.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JLabelMensaje.setForeground(Color.GREEN);
+        JLabelMensaje.setForeground(new Color(50, 191, 64));
         try {
             Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
             JButtonVolverAtras.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
@@ -125,7 +125,7 @@ public class FormularioProyecto extends JPanel {
 
                 try {
                     serviceProyecto.guardar(proyecto);
-                    JLabelMensaje.setForeground(Color.GREEN);
+                    JLabelMensaje.setForeground(new Color(50, 191, 64));
                     JLabelMensaje.setText("Proyecto creado con éxito");
                 }
                 catch (ServiceException s) {

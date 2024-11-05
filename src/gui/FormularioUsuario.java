@@ -1,10 +1,8 @@
 package gui;
-import DAO.DAOException;
+
 import model.Administrador;
-import model.Incidencia;
 import model.Usuario;
 import service.ServiceAdministrador;
-import service.ServiceIncidencia;
 import service.ServiceException;
 import service.ServiceUsuario;
 
@@ -22,6 +20,7 @@ public class FormularioUsuario extends JPanel {
     PanelManager panel;
     JPanel formularioUsuario;
     JLabel JLabelVacio;
+    JLabel JLabelVacio2;
     JButton JButtonVolverAtras;
     JLabel JLabelID;
     JTextField JTextFieldID;
@@ -49,8 +48,9 @@ public class FormularioUsuario extends JPanel {
         serviceUsuario = new ServiceUsuario();
         usuario = new Usuario();
         formularioUsuario = new JPanel();
-        formularioUsuario.setLayout(new GridLayout(9,2));
+        formularioUsuario.setLayout(new GridLayout(8,2));
         JLabelVacio = new JLabel();
+        JLabelVacio2 = new JLabel();
         JButtonVolverAtras = new JButton(" Volver atrás");
         JLabelID = new JLabel("ID");
         JTextFieldID = new JTextField(30);
@@ -83,7 +83,7 @@ public class FormularioUsuario extends JPanel {
 
         // Estilos
         formularioUsuario.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JLabelMensaje.setForeground(Color.GREEN);
+        JLabelMensaje.setForeground(new Color(50, 191, 64));
         try {
             Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
             JButtonVolverAtras.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
@@ -106,6 +106,8 @@ public class FormularioUsuario extends JPanel {
         formularioUsuario.add(JButtonCrear);
         formularioUsuario.add(JButtonBuscar);
         formularioUsuario.add(JButtonModificar);
+        formularioUsuario.add(JLabelVacio2);
+        formularioUsuario.add(JLabelMensaje);
 
         JButtonVolverAtras.addActionListener(new ActionListener() {
             @Override
@@ -153,7 +155,8 @@ public class FormularioUsuario extends JPanel {
 
                 try {
                     serviceAdministrador.crearUsuario(usuario.getIdUsuario(), usuario.getNombreUsuario(), JPasswordFieldContrasena.getPassword(), tipo);
-                    JLabelMensaje.setForeground(Color.GREEN);
+
+                    JLabelMensaje.setForeground(new Color(50, 191, 64));
                     JLabelMensaje.setText("Usuario creado con éxito");
                 }
                 catch (ServiceException s) {
@@ -185,7 +188,7 @@ public class FormularioUsuario extends JPanel {
                 }
             }
         });
-    /*
+        /*
         JButtonModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -222,7 +225,7 @@ public class FormularioUsuario extends JPanel {
 
                     serviceAdministrador.modificar(i);
 
-                    JLabelMensaje.setForeground(Color.GREEN);
+                    JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Incidencia modificada con éxito");
                 }
                 catch (DAOException s) {
@@ -242,43 +245,7 @@ public class FormularioUsuario extends JPanel {
                 }
             }
         });
-
-        JButtonCerrarSesion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    panel.mostrar(panel.getInicioSesion());
-                }
-                catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
-                }
-            }
-        });
-
-        JButtonEliminar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Incidencia incidencia = new Incidencia();
-                if (!JTextFieldID.getText().isEmpty())
-                    incidencia.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
-                else
-                    JOptionPane.showMessageDialog(null,"Ingrese un ID");
-
-                try {
-                    if (usuario.getPermisos().contains(4)) {
-                        serviceAdministrador.cerrar(incidencia);
-                        JLabelMensaje.setForeground(Color.GREEN);
-                        JLabelMensaje.setText("Incidencia cerrada con éxito");
-                    }
-                    else
-                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
-                }
-                catch (DAOException ex) {
-                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
-                }
-            }
-        });*/
-
+        */
         setLayout(new BorderLayout());
         add(formularioUsuario, BorderLayout.CENTER);
     }

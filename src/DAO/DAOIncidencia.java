@@ -72,11 +72,12 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET DESCRIPCION = ?, ESTIMACION_HORAS = ?, ESTADO = ? WHERE ID_INCIDENCIA = ?");
+            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET DESCRIPCION = ?, ESTIMACION_HORAS = ?, ESTADO = ?, TIEMPO_INVERTIDO = ? WHERE ID_INCIDENCIA = ?");
             preparedStatement.setString(1, incidencia.getDescripcion());
             preparedStatement.setDouble(2, incidencia.getEstimacionHoras());
             preparedStatement.setString(3, incidencia.getEstado());
-            preparedStatement.setInt(4, incidencia.getIdIncidencia());
+            preparedStatement.setDouble(4, incidencia.getTiempoInvertido());
+            preparedStatement.setInt(5, incidencia.getIdIncidencia());
 
             int i = preparedStatement.executeUpdate();
             System.out.println(i);
@@ -173,7 +174,9 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            preparedStatement = connection.prepareStatement("SELECT INCIDENCIA.*, USUARIO.NOMBRE_USUARIO, PROYECTO.NOMBRE_PROYECTO  FROM INCIDENCIA LEFT JOIN USUARIO ON INCIDENCIA.USUARIO_RESPONSABLE = USUARIO.ID_USUARIO LEFT JOIN PROYECTO ON INCIDENCIA.PROYECTO = PROYECTO.ID_PROYECTO");
+            preparedStatement = connection.prepareStatement("SELECT INCIDENCIA.*, USUARIO.NOMBRE_USUARIO, PROYECTO.NOMBRE_PROYECTO " +
+                    "FROM INCIDENCIA LEFT JOIN USUARIO ON INCIDENCIA.USUARIO_RESPONSABLE = USUARIO.ID_USUARIO LEFT JOIN PROYECTO " +
+                    "ON INCIDENCIA.PROYECTO = PROYECTO.ID_PROYECTO WHERE INCIDENCIA.CERRADA = FALSE;");
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
@@ -184,19 +187,18 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 incidencia.setDescripcion(rs.getString("DESCRIPCION"));
                 incidencia.setEstimacionHoras(rs.getDouble("ESTIMACION_HORAS"));
                 incidencia.setEstado(rs.getString("ESTADO"));
-                incidencia.setEstado(String.valueOf(rs.getDouble("TIEMPO_INVERTIDO")));
+                incidencia.setTiempoInvertido(rs.getDouble("TIEMPO_INVERTIDO"));
                 usuario.setIdUsuario(rs.getInt("USUARIO_RESPONSABLE"));
                 usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
                 proyecto.setIdProyecto(rs.getInt("PROYECTO"));
                 proyecto.setNombreProyecto(rs.getString("NOMBRE_PROYECTO"));
-
                 incidencia.setUsuario(usuario);
                 incidencia.setProyecto(proyecto);
                 incidencias.add(incidencia);
             }
         }
         catch (ClassNotFoundException | SQLException e) {
-            throw new DAOException("Ocurrio un error en la base de datos");
+            throw new DAOException("Ocurrió un error en la base de datos");
         }
         return incidencias;
     }
