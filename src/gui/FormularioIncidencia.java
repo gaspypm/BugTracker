@@ -158,7 +158,7 @@ public class FormularioIncidencia extends JPanel {
                 try {
                     serviceIncidencia.guardar(incidencia);
                     JLabelMensaje.setForeground(new Color(50, 191, 64));
-                    JLabelMensaje.setText("Incidencia guardada con éxito");
+                    JLabelMensaje.setText("Incidencia reportada con éxito");
                 }
                 catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo guardar la incidencia");
@@ -170,18 +170,25 @@ public class FormularioIncidencia extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (JTextFieldID.getText().isEmpty()) {
-                    JLabelMensaje.setForeground(Color.RED);
+                    JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Ingrese un ID");
                 }
                 try {
-                    Incidencia i = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
-                    JTextFieldDescripcion.setText(i.getDescripcion());
-                    JTextFieldEstimacionHoras.setText(String.valueOf(i.getEstimacionHoras()));
-                    JComboBoxEstados.setSelectedItem(i.getEstado());
-                    JTextFieldTiempoInvertido.setText(String.valueOf(i.getTiempoInvertido()));
+                    Incidencia incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
+                    if(incidencia != null) {
+                        JTextFieldDescripcion.setText(incidencia.getDescripcion());
+                        JTextFieldEstimacionHoras.setText(String.valueOf(incidencia.getEstimacionHoras()));
+                        JComboBoxEstados.setSelectedItem(incidencia.getEstado());
+                        JTextFieldTiempoInvertido.setText(String.valueOf(incidencia.getTiempoInvertido()));
+
+                    }
+                    else {
+                        JLabelMensaje.setForeground(new Color(217, 9, 9));
+                        JLabelMensaje.setText("La incidencia no fue encontrada");
+                    }
                 }
                 catch (DAOException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo buscar la incidencia");
+                    JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
         });
@@ -194,33 +201,35 @@ public class FormularioIncidencia extends JPanel {
                     JLabelMensaje.setText("Ingrese un ID");
                     return;
                 }
+
                 try {
-                    Incidencia i = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
-                    i.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
-                    i.setDescripcion(JTextFieldDescripcion.getText());
+                    Incidencia incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
+
+                    if (!JTextFieldDescripcion.getText().isEmpty())
+                        incidencia.setDescripcion(JTextFieldDescripcion.getText());
 
                     if (!JTextFieldEstimacionHoras.getText().isEmpty())
-                        i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
+                        incidencia.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
 
-                    if (!JComboBoxEstados.getSelectedItem().equals(i.getEstado())) {
+                    if (!JComboBoxEstados.getSelectedItem().equals(incidencia.getEstado())) {
                         if (usuario.getPermisos().contains(2)) {
-                            i.setEstado(JComboBoxEstados.getSelectedItem().toString());
+                            incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
                         } else {
                             JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el estado");
                             return;
                         }
                     }
 
-                    if (!JTextFieldTiempoInvertido.getText().isEmpty()) {
+                    if (!JTextFieldTiempoInvertido.getText().equals(String.valueOf(incidencia.getTiempoInvertido()))) {
                         if (usuario.getPermisos().contains(3)) {
-                            i.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
+                            incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
                         } else {
                             JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
                             return;
                         }
                     }
 
-                    serviceIncidencia.modificar(i);
+                    serviceIncidencia.modificar(incidencia);
 
                     JLabelMensaje.setForeground(new Color(50, 191, 64));
                     JLabelMensaje.setText("Incidencia modificada con éxito");

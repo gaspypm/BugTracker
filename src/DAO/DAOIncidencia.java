@@ -143,6 +143,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 incidenciaAux.setDescripcion(rs.getString("DESCRIPCION"));
                 incidenciaAux.setEstimacionHoras(rs.getDouble("ESTIMACION_HORAS"));
                 incidenciaAux.setEstado(rs.getString("ESTADO"));
+                incidenciaAux.setTiempoInvertido(rs.getDouble("TIEMPO_INVERTIDO"));
             }
             return incidenciaAux;
         }

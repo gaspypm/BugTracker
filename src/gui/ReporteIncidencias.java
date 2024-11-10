@@ -39,7 +39,7 @@ public class ReporteIncidencias extends JPanel {
         JButtonVolverAtras = new JButton("Volver atrás");
         contenido.addColumn("ID");
         contenido.addColumn("Descripción");
-        contenido.addColumn("Estimación Horas");
+        contenido.addColumn("Est. Horas");
         contenido.addColumn("Estado");
         contenido.addColumn("Tiempo Invertido");
         contenido.addColumn("Usuario");
