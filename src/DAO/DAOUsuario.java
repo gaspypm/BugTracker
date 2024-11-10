@@ -138,7 +138,7 @@ public class DAOUsuario implements IDAO<Usuario> {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                if (rs.getString("TIPO") == "ADMINISTRADOR") {
+                if ("ADMINISTRADOR".equals(rs.getString("TIPO"))) {
                     administrador = new Administrador();
                     administrador.setIdUsuario(rs.getInt("ID_USUARIO"));
                     administrador.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
@@ -299,12 +299,10 @@ public class DAOUsuario implements IDAO<Usuario> {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             preparedStatement = connection.prepareStatement("SELECT MAX(ID_USUARIO) AS id FROM USUARIO");
             ResultSet rs = preparedStatement.executeQuery();
-
             if (rs.next())
                 return rs.getInt("id");
             else
                 return 1;
-
         }
         catch (ClassNotFoundException|SQLException e) {
             e.printStackTrace();
@@ -312,11 +310,12 @@ public class DAOUsuario implements IDAO<Usuario> {
         }
         finally {
             try {
-                preparedStatement.close();
-            }
-            catch(SQLException e) {
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                throw new DAOException("Error");
             }
         }
     }

@@ -198,9 +198,9 @@ public class FormularioUsuario extends JPanel {
                     return;
                 }
                 try {
-                    Incidencia i = new Incidencia();
-                    i.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
-                    i.setDescripcion(JTextFieldNombreUsuario.getText());
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(Integer.parseInt(JTextFieldID.getText()));
+                    u.setNombreUsuario(JTextFieldNombreUsuario.getText());
 
                     if (!JTextFieldEstimacionHoras.getText().isEmpty())
                         i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));

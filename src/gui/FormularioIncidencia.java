@@ -162,7 +162,7 @@ public class FormularioIncidencia extends JPanel {
                     JLabelMensaje.setText("Incidencia guardada con éxito");
                 }
                 catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo guardar");
+                    JOptionPane.showMessageDialog(null,"No se pudo guardar la incidencia");
                 }
             }
         });
@@ -182,7 +182,7 @@ public class FormularioIncidencia extends JPanel {
                     JTextFieldTiempoInvertido.setText(String.valueOf(i.getTiempoInvertido()));
                 }
                 catch (DAOException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo guardar");
+                    JOptionPane.showMessageDialog(null,"No se pudo buscar la incidencia");
                 }
             }
         });
@@ -206,7 +206,7 @@ public class FormularioIncidencia extends JPanel {
                     if (!JComboBoxEstados.getSelectedItem().equals("")) {
                         if (usuario.getPermisos().contains(2)) {
                             i.setEstado(JComboBoxEstados.getSelectedItem().toString());
-                        } else if (!usuario.getPermisos().contains(2)) {
+                        } else {
                             JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el estado");
                             return;
                         }
@@ -215,8 +215,7 @@ public class FormularioIncidencia extends JPanel {
                     if (usuario.getPermisos().contains(3)) {
                         if (!JTextFieldTiempoInvertido.getText().isEmpty())
                             i.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
-                    }
-                    else if (!JTextFieldTiempoInvertido.getText().isEmpty()) {
+                    } else {
                         JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
                         return;
                     }
@@ -227,7 +226,7 @@ public class FormularioIncidencia extends JPanel {
                     JLabelMensaje.setText("Incidencia modificada con éxito");
                 }
                 catch (DAOException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo modificar");
+                    JOptionPane.showMessageDialog(null,"No se pudo modificar la incidencia");
                 }
             }
         });

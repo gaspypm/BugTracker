@@ -239,7 +239,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET CERRADA = TRUE WHERE ID_INCIDENCIA = ?");
+            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET CERRADA = TRUE, ESTADO = 'Cerrado' WHERE ID_INCIDENCIA = ?");
             preparedStatement.setInt(1, incidencia.getIdIncidencia());
 
             int i = preparedStatement.executeUpdate();
