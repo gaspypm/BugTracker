@@ -75,6 +75,7 @@ public class EditorPermisos extends JPanel {
         editorPermisos.add(JButtonActualizarPermisos);
         editorPermisos.add(JButtonVolverAtras);
 
+        // Botones
         JButtonMostrarPermisos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

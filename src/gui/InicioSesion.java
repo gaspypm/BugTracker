@@ -65,6 +65,7 @@ public class InicioSesion extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
         inicioSesion.add(JButtonInvitado, gbc);
 
+        // Botones
         JButtonInvitado.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

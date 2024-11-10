@@ -90,6 +90,7 @@ public class FormularioProyecto extends JPanel {
         formularioProyecto.add(JButtonModificar);
         formularioProyecto.add(JButtonEliminar);
 
+        // Botones
         JButtonVolverAtras.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -74,6 +74,7 @@ public class ReporteIncidencias extends JPanel {
         add(reporteIncidencias, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.SOUTH);
 
+        // Botones
         JButtonVolverAtras.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -115,7 +115,6 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia.add(JLabelMensaje);
 
         // Agrego estados de incidencia a JComboBoxEstados
-        JComboBoxEstados.addItem("");
         JComboBoxEstados.addItem("Nuevo");
         JComboBoxEstados.addItem("Asignado");
         JComboBoxEstados.addItem("En progreso");
@@ -125,6 +124,7 @@ public class FormularioIncidencia extends JPanel {
         JComboBoxEstados.addItem("Pospuesto");
         JComboBoxEstados.addItem("Rechazado");
 
+        // Botones
         JButtonReportar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -150,8 +150,7 @@ public class FormularioIncidencia extends JPanel {
                     incidencia.setDescripcion(JTextFieldDescripcion.getText());
                 if (!JTextFieldEstimacionHoras.getText().isEmpty())
                     incidencia.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
-                if (!JComboBoxEstados.getSelectedItem().equals(""))
-                    incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
+                incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
                 if (!JTextFieldTiempoInvertido.getText().isEmpty())
                     incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
 
@@ -196,14 +195,14 @@ public class FormularioIncidencia extends JPanel {
                     return;
                 }
                 try {
-                    Incidencia i = new Incidencia();
+                    Incidencia i = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
                     i.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
                     i.setDescripcion(JTextFieldDescripcion.getText());
 
                     if (!JTextFieldEstimacionHoras.getText().isEmpty())
                         i.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
 
-                    if (!JComboBoxEstados.getSelectedItem().equals("")) {
+                    if (!JComboBoxEstados.getSelectedItem().equals(i.getEstado())) {
                         if (usuario.getPermisos().contains(2)) {
                             i.setEstado(JComboBoxEstados.getSelectedItem().toString());
                         } else {
@@ -212,12 +211,13 @@ public class FormularioIncidencia extends JPanel {
                         }
                     }
 
-                    if (usuario.getPermisos().contains(3)) {
-                        if (!JTextFieldTiempoInvertido.getText().isEmpty())
+                    if (!JTextFieldTiempoInvertido.getText().isEmpty()) {
+                        if (usuario.getPermisos().contains(3)) {
                             i.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
-                        return;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
+                            return;
+                        }
                     }
 
                     serviceIncidencia.modificar(i);
@@ -226,7 +226,7 @@ public class FormularioIncidencia extends JPanel {
                     JLabelMensaje.setText("Incidencia modificada con éxito");
                 }
                 catch (DAOException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo modificar la incidencia");
+                    JOptionPane.showMessageDialog(null,"No se pudo modificar");
                 }
             }
         });
