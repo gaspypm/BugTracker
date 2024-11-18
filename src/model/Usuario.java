@@ -6,6 +6,7 @@ public class Usuario {
     private int idUsuario;
     private String nombreUsuario;
     private ArrayList<Integer> permisos;
+    private String tipo;
 
     public Usuario() {
         this.permisos = new ArrayList<>();
@@ -43,5 +44,13 @@ public class Usuario {
 
     public void setPermisos(ArrayList<Integer> permisos) {
         this.permisos = permisos;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

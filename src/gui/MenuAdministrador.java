@@ -111,10 +111,24 @@ public class MenuAdministrador extends JPanel {
         JButtonCerrarSesion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    panel.mostrar(panel.getInicioSesion());
-                } catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                Object[] opciones = {"No", "Sí"};
+
+                int confirmacion = JOptionPane.showOptionDialog(
+                        null,
+                        "¿Está seguro que desea cerrar sesión?",
+                        "Confirmación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.CANCEL_OPTION,
+                        null,
+                        opciones,
+                        opciones[0]);
+                if (confirmacion != JOptionPane.YES_OPTION) {
+                    try {
+                        panel.mostrar(panel.getInicioSesion());
+                    }
+                    catch (ServiceException s) {
+                        JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                    }
                 }
             }
         });

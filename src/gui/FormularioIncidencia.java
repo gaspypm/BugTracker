@@ -40,12 +40,12 @@ public class FormularioIncidencia extends JPanel {
     JButton JButtonBuscar;
     JLabel JLabelMensaje;
 
-    public FormularioIncidencia(PanelManager panel) {
+    public FormularioIncidencia(PanelManager panel) throws ServiceException {
         this.panel = panel;
         armarFormulario();
     }
 
-    public void armarFormulario() {
+    public void armarFormulario() throws ServiceException {
         // Inicializo todos los elementos de la ventana
         serviceIncidencia = new ServiceIncidencia();
         serviceUsuario = new ServiceUsuario();
@@ -53,7 +53,6 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia = new JPanel();
         formularioIncidencia.setLayout(new GridLayout(10,2));
         JLabelBienvenida = new JLabel("Bienvenido, " + panel.getUsuarioActual().getNombreUsuario());
-        JButtonSalir = new JButton("Cerrar sesión");
         JLabelID = new JLabel("ID");
         JTextFieldID = new JTextField(30);
         JLabelDescripcion = new JLabel("Descripción");
@@ -77,6 +76,7 @@ public class FormularioIncidencia extends JPanel {
             usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
             usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
             usuario.setPermisos(serviceUsuario.obtenerPermisos(usuario.getIdUsuario()));
+            usuario.setTipo(serviceUsuario.validarTipo(usuario.getIdUsuario()));
         }
         catch (ServiceException ex) {
             throw new RuntimeException(ex);
@@ -84,12 +84,26 @@ public class FormularioIncidencia extends JPanel {
 
         // Estilos
         formularioIncidencia.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        try {
-            Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
-            JButtonSalir.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+
+        if(usuario.getTipo().equals("ADMINISTRADOR")) {
+            JButtonSalir = new JButton("Volver atrás");
+            try {
+                Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
+                JButtonSalir.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        else {
+            JButtonSalir = new JButton("Cerrar sesión");
+            try {
+                Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
+                JButtonSalir.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // Agrego elementos al panel
@@ -210,11 +224,6 @@ public class FormularioIncidencia extends JPanel {
                         throw new RuntimeException(ex);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Ingrese un ID");
-                    return;
-                }
-
-                if (JTextFieldID.getText().isEmpty()) {
                     JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Ingrese un ID");
                     return;
@@ -223,12 +232,20 @@ public class FormularioIncidencia extends JPanel {
                 int confirmacion = JOptionPane.showOptionDialog(
                         null,
                         "ID: " + incidencia.getIdIncidencia() +
-                                "\nDescripción: " + incidencia.getDescripcion() +
-                                "\nEstimación de horas: " + incidencia.getEstimacionHoras() +
-                                "\nEstado: " + incidencia.getEstado() +
-                                "\nTiempo invertido: " + incidencia.getTiempoInvertido() +
+                                "\nDescripción:" +
+                                "\n  Anterior: " + incidencia.getDescripcion() +
+                                "\n  Actual: " + (!JTextFieldDescripcion.getText().isEmpty() ? JTextFieldDescripcion.getText() : incidencia.getDescripcion()) +
+                                "\nEstimación de horas:" +
+                                "\n  Anterior: " + incidencia.getEstimacionHoras() +
+                                "\n  Actual: " + (!JTextFieldEstimacionHoras.getText().isEmpty() ? JTextFieldEstimacionHoras.getText() : incidencia.getEstimacionHoras()) +
+                                "\nEstado:" +
+                                "\n  Anterior: " + incidencia.getEstado() +
+                                "\n  Actual: " + (!JComboBoxEstados.getSelectedItem().toString().isEmpty() && !JComboBoxEstados.getSelectedItem().equals(incidencia.getEstado()) ? JComboBoxEstados.getSelectedItem() : incidencia.getEstado()) +
+                                "\nTiempo invertido:" +
+                                "\n  Anterior: " + incidencia.getTiempoInvertido() +
+                                "\n  Actual: " + (!JTextFieldTiempoInvertido.getText().isEmpty() ? JTextFieldTiempoInvertido.getText() : incidencia.getTiempoInvertido()) +
                                 "\n\n¿Está seguro que desea modificar la incidencia?",
-                        "Confirmación",
+                        "Confirmar cambios",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.CANCEL_OPTION,
                         null,
@@ -292,6 +309,17 @@ public class FormularioIncidencia extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object[] opciones = {"No", "Sí"};
+
+                if(usuario.getTipo().equals("ADMINISTRADOR")) {
+                    try {
+                        panel.mostrar(panel.getMenuAdministrador());
+                        return;
+                    }
+                    catch (ServiceException s) {
+                        JOptionPane.showMessageDialog(null,"No se pudo volver atrás");
+                    }
+                }
+
                 int confirmacion = JOptionPane.showOptionDialog(
                         null,
                         "¿Está seguro que desea cerrar sesión?",
@@ -317,6 +345,11 @@ public class FormularioIncidencia extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 Incidencia incidencia = new Incidencia();
                 Object[] opciones = {"Sí", "No"};
+
+                if (panel.getUsuarioActual().getNombreUsuario().equals("Invitado")) {
+                    JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                    return;
+                }
 
                 if (!JTextFieldID.getText().isEmpty()) {
                     try {
