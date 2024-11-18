@@ -22,7 +22,7 @@ public class FormularioIncidencia extends JPanel {
     JPanel formularioIncidencia;
     JLabel JLabelVacio;
     JLabel JLabelBienvenida;
-    JButton JButtonCerrarSesion;
+    JButton JButtonSalir;
     JLabel JLabelID;
     JTextField JTextFieldID;
     JLabel JLabelDescripcion;
@@ -53,7 +53,7 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia = new JPanel();
         formularioIncidencia.setLayout(new GridLayout(10,2));
         JLabelBienvenida = new JLabel("Bienvenido, " + panel.getUsuarioActual().getNombreUsuario());
-        JButtonCerrarSesion = new JButton(" Cerrar sesión");
+        JButtonSalir = new JButton("Cerrar sesión");
         JLabelID = new JLabel("ID");
         JTextFieldID = new JTextField(30);
         JLabelDescripcion = new JLabel("Descripción");
@@ -84,10 +84,9 @@ public class FormularioIncidencia extends JPanel {
 
         // Estilos
         formularioIncidencia.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JLabelMensaje.setForeground(new Color(50, 191, 64));
         try {
             Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
-            JButtonCerrarSesion.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+            JButtonSalir.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -95,7 +94,7 @@ public class FormularioIncidencia extends JPanel {
 
         // Agrego elementos al panel
         formularioIncidencia.add(JLabelBienvenida);
-        formularioIncidencia.add(JButtonCerrarSesion);
+        formularioIncidencia.add(JButtonSalir);
         formularioIncidencia.add(JLabelID);
         formularioIncidencia.add(JTextFieldID);
         formularioIncidencia.add(JLabelDescripcion);
@@ -154,14 +153,14 @@ public class FormularioIncidencia extends JPanel {
                 if (!JTextFieldTiempoInvertido.getText().isEmpty())
                     incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
 
-                incidencia.setUsuario(usuario);
+                incidencia.setUsuarioResponsable(usuario);
                 try {
                     serviceIncidencia.guardar(incidencia);
                     JLabelMensaje.setForeground(new Color(50, 191, 64));
                     JLabelMensaje.setText("Incidencia reportada con éxito");
                 }
                 catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo guardar la incidencia");
+                    JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
         });
@@ -172,6 +171,7 @@ public class FormularioIncidencia extends JPanel {
                 if (JTextFieldID.getText().isEmpty()) {
                     JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Ingrese un ID");
+                    return;
                 }
                 try {
                     Incidencia incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
@@ -180,7 +180,6 @@ public class FormularioIncidencia extends JPanel {
                         JTextFieldEstimacionHoras.setText(String.valueOf(incidencia.getEstimacionHoras()));
                         JComboBoxEstados.setSelectedItem(incidencia.getEstado());
                         JTextFieldTiempoInvertido.setText(String.valueOf(incidencia.getTiempoInvertido()));
-
                     }
                     else {
                         JLabelMensaje.setForeground(new Color(217, 9, 9));
@@ -196,46 +195,83 @@ public class FormularioIncidencia extends JPanel {
         JButtonModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Incidencia incidencia = new Incidencia();
+                Object[] opciones = {"Sí", "No"};
+
+                if (panel.getUsuarioActual().getNombreUsuario().equals("Invitado")) {
+                    JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                    return;
+                }
+
+                if (!JTextFieldID.getText().isEmpty()) {
+                    try {
+                        incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
+                    } catch (DAOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ingrese un ID");
+                    return;
+                }
+
                 if (JTextFieldID.getText().isEmpty()) {
                     JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Ingrese un ID");
                     return;
                 }
 
-                try {
-                    Incidencia incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
+                int confirmacion = JOptionPane.showOptionDialog(
+                        null,
+                        "ID: " + incidencia.getIdIncidencia() +
+                                "\nDescripción: " + incidencia.getDescripcion() +
+                                "\nEstimación de horas: " + incidencia.getEstimacionHoras() +
+                                "\nEstado: " + incidencia.getEstado() +
+                                "\nTiempo invertido: " + incidencia.getTiempoInvertido() +
+                                "\n\n¿Está seguro que desea modificar la incidencia?",
+                        "Confirmación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.CANCEL_OPTION,
+                        null,
+                        opciones,
+                        opciones[0]);
 
-                    if (!JTextFieldDescripcion.getText().isEmpty())
-                        incidencia.setDescripcion(JTextFieldDescripcion.getText());
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    try {
+                        if (!JTextFieldDescripcion.getText().isEmpty())
+                            incidencia.setDescripcion(JTextFieldDescripcion.getText());
 
-                    if (!JTextFieldEstimacionHoras.getText().isEmpty())
-                        incidencia.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
+                        if (!JTextFieldEstimacionHoras.getText().isEmpty())
+                            incidencia.setEstimacionHoras(Double.parseDouble(JTextFieldEstimacionHoras.getText()));
 
-                    if (!JComboBoxEstados.getSelectedItem().equals(incidencia.getEstado())) {
-                        if (usuario.getPermisos().contains(2)) {
-                            incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
-                        } else {
-                            JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el estado");
-                            return;
+                        if (!JComboBoxEstados.getSelectedItem().equals(incidencia.getEstado())) {
+                            if (usuario.getPermisos().contains(2)) {
+                                incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el estado");
+                                return;
+                            }
                         }
-                    }
 
-                    if (!JTextFieldTiempoInvertido.getText().equals(String.valueOf(incidencia.getTiempoInvertido()))) {
-                        if (usuario.getPermisos().contains(3)) {
-                            incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
-                        } else {
-                            JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
-                            return;
+                        if (!JTextFieldTiempoInvertido.getText().isEmpty() && !JTextFieldTiempoInvertido.getText().equals(String.valueOf(incidencia.getTiempoInvertido()))) {
+                            if (usuario.getPermisos().contains(3)) {
+                                incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No tienes permiso para modificar el tiempo invertido");
+                                return;
+                            }
                         }
+
+                        serviceIncidencia.modificar(incidencia);
+
+                        JLabelMensaje.setForeground(new Color(50, 191, 64));
+                        JLabelMensaje.setText("Incidencia modificada con éxito");
+                    } catch (DAOException s) {
+                        JOptionPane.showMessageDialog(null, "No se pudo modificar");
                     }
-
-                    serviceIncidencia.modificar(incidencia);
-
-                    JLabelMensaje.setForeground(new Color(50, 191, 64));
-                    JLabelMensaje.setText("Incidencia modificada con éxito");
                 }
-                catch (DAOException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo modificar");
+                else {
+                    JLabelMensaje.setForeground(new Color(217, 9, 9));
+                    JLabelMensaje.setText("Operación cancelada");
                 }
             }
         });
@@ -252,14 +288,26 @@ public class FormularioIncidencia extends JPanel {
             }
         });
 
-        JButtonCerrarSesion.addActionListener(new ActionListener() {
+        JButtonSalir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    panel.mostrar(panel.getInicioSesion());
-                }
-                catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                Object[] opciones = {"No", "Sí"};
+                int confirmacion = JOptionPane.showOptionDialog(
+                        null,
+                        "¿Está seguro que desea cerrar sesión?",
+                        "Confirmación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.CANCEL_OPTION,
+                        null,
+                        opciones,
+                        opciones[0]);
+                if (confirmacion != JOptionPane.YES_OPTION) {
+                    try {
+                        panel.mostrar(panel.getInicioSesion());
+                    }
+                    catch (ServiceException s) {
+                        JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                    }
                 }
             }
         });
@@ -268,22 +316,49 @@ public class FormularioIncidencia extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Incidencia incidencia = new Incidencia();
-                if (!JTextFieldID.getText().isEmpty())
-                    incidencia.setIdIncidencia(Integer.parseInt(JTextFieldID.getText()));
-                else
-                    JOptionPane.showMessageDialog(null,"Ingrese un ID");
+                Object[] opciones = {"Sí", "No"};
 
-                try {
-                    if (usuario.getPermisos().contains(4)) {
-                        serviceIncidencia.cerrar(incidencia);
-                        JLabelMensaje.setForeground(new Color(50, 191, 64));
-                        JLabelMensaje.setText("Incidencia cerrada con éxito");
+                if (!JTextFieldID.getText().isEmpty()) {
+                    try {
+                        incidencia = serviceIncidencia.buscar(Integer.parseInt(JTextFieldID.getText()));
+                    } catch (DAOException ex) {
+                        throw new RuntimeException(ex);
                     }
-                    else
-                        JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ingrese un ID");
+                    return;
                 }
-                catch (DAOException ex) {
-                    JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+
+                int confirmacion = JOptionPane.showOptionDialog(
+                        null,
+                        "ID: " + incidencia.getIdIncidencia() +
+                                "\nDescripción: " + incidencia.getDescripcion() +
+                                "\nEstimación de horas: " + incidencia.getEstimacionHoras() +
+                                "\nEstado: " + incidencia.getEstado() +
+                                "\nTiempo invertido: " + incidencia.getTiempoInvertido() +
+                                "\n\n¿Está seguro que desea cerrar la incidencia?",
+                        "Confirmación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.CANCEL_OPTION,
+                        null,
+                        opciones,
+                        opciones[0]);
+
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    try {
+                        if (usuario.getPermisos().contains(4)) {
+                            serviceIncidencia.cerrar(incidencia);
+                            JLabelMensaje.setForeground(new Color(50, 191, 64));
+                            JLabelMensaje.setText("Incidencia cerrada con éxito");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
+                        }
+                    } catch (DAOException ex) {
+                        JOptionPane.showMessageDialog(null, "No se pudo cerrar la incidencia");
+                    }
+                } else {
+                    JLabelMensaje.setForeground(new Color(217, 9, 9));
+                    JLabelMensaje.setText("Operación cancelada");
                 }
             }
         });

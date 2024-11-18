@@ -1,6 +1,5 @@
 package DAO;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import model.Incidencia;
 import model.Usuario;
 import model.Proyecto;
@@ -11,11 +10,10 @@ import java.util.ArrayList;
 
 public class DAOIncidencia implements IDAO<Incidencia> {
     private ServiceUsuario serviceUsuario;
-    Dotenv dotenv = Dotenv.load();
-    String DB_JDBC_DRIVER = dotenv.get("DB_JDBC_DRIVER");
-    String DB_URL = dotenv.get("DB_URL");
-    String DB_USER = dotenv.get("DB_USER");
-    String DB_PASSWORD = dotenv.get("DB_PASSWORD");
+    String DB_JDBC_DRIVER = "org.h2.Driver";
+    String DB_URL = "jdbc:h2:/Users/gaspar/Documents/UP/2024/Laboratorio I/Actividades/BugTracker/baseDeDatos";
+    String DB_USER = "sa";
+    String DB_PASSWORD = "";
 
     @Override
     public void guardar(Incidencia incidencia) throws DAOException {
@@ -45,7 +43,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             preparedStatement.setDouble(3, incidencia.getEstimacionHoras());
             preparedStatement.setString(4, incidencia.getEstado());
             preparedStatement.setDouble(5, incidencia.getTiempoInvertido());
-            preparedStatement.setInt(6, incidencia.getUsuario().getIdUsuario());
+            preparedStatement.setInt(6, incidencia.getUsuarioResponsable().getIdUsuario());
 
             int i = preparedStatement.executeUpdate();
             System.out.println(i);
@@ -193,7 +191,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
                 proyecto.setIdProyecto(rs.getInt("PROYECTO"));
                 proyecto.setNombreProyecto(rs.getString("NOMBRE_PROYECTO"));
-                incidencia.setUsuario(usuario);
+                incidencia.setUsuarioResponsable(usuario);
                 incidencia.setProyecto(proyecto);
                 incidencias.add(incidencia);
             }

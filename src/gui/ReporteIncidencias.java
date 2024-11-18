@@ -63,7 +63,7 @@ public class ReporteIncidencias extends JPanel {
                 fila[2] = incidencia.getEstimacionHoras();
                 fila[3] = incidencia.getEstado();
                 fila[4] = incidencia.getTiempoInvertido();
-                fila[5] = incidencia.getUsuario().getNombreUsuario();
+                fila[5] = incidencia.getUsuarioResponsable().getNombreUsuario();
 
                 contenido.addRow(fila);
             }
