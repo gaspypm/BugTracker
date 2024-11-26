@@ -1,6 +1,5 @@
 package gui;
 
-import model.Usuario;
 import service.ServiceException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,6 +17,8 @@ public class MenuAdministrador extends JPanel {
     JButton JButtonMostrarIncidencias;
     JButton JButtonEditarPermisosUsuario;
     JButton JButtonCerrarSesion;
+    JButton JButtonReporteProyectos;
+    JButton JButtonHistorialMovimientos;
 
     public MenuAdministrador(PanelManager panel) {
         this.panel = panel;
@@ -27,13 +28,15 @@ public class MenuAdministrador extends JPanel {
     public void armarPanelAdministrador() {
         // Inicializo todos los elementos de la ventana
         menuAdministrador = new JPanel();
-        menuAdministrador.setLayout(new GridLayout(3,2));
+        menuAdministrador.setLayout(new GridLayout(4,2));
         JButtonCrearUsuario = new JButton("Crear usuario");
         JButtonCrearProyecto = new JButton("Crear proyecto");
         JButtonCrearIncidencia = new JButton("Crear incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonEditarPermisosUsuario = new JButton("Editar permisos usuario");
-        JButtonCerrarSesion = new JButton(" Cerrar sesión");
+        JButtonReporteProyectos = new JButton("Reporte proyectos");
+        JButtonHistorialMovimientos = new JButton("Historial movimientos");
+        JButtonCerrarSesion = new JButton("Cerrar sesión");
 
         // Estilos
         menuAdministrador.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -50,6 +53,8 @@ public class MenuAdministrador extends JPanel {
         menuAdministrador.add(JButtonCrearIncidencia);
         menuAdministrador.add(JButtonMostrarIncidencias);
         menuAdministrador.add(JButtonCrearProyecto);
+        menuAdministrador.add(JButtonReporteProyectos);
+        menuAdministrador.add(JButtonHistorialMovimientos);
         menuAdministrador.add(JButtonCerrarSesion);
 
         // Botones
@@ -103,6 +108,30 @@ public class MenuAdministrador extends JPanel {
                 try {
                     panel.mostrar(panel.getFormularioProyecto());
                 } catch (ServiceException s) {
+                    s.printStackTrace();
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
+            }
+        });
+
+        JButtonReporteProyectos.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    panel.mostrar(panel.getFormularioProyecto());
+                } catch (ServiceException s) {
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
+            }
+        });
+
+        JButtonHistorialMovimientos.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    panel.mostrar(panel.getReporteMovimientos());
+                } catch (ServiceException s) {
+                    s.printStackTrace();
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
             }
@@ -125,8 +154,7 @@ public class MenuAdministrador extends JPanel {
                 if (confirmacion != JOptionPane.YES_OPTION) {
                     try {
                         panel.mostrar(panel.getInicioSesion());
-                    }
-                    catch (ServiceException s) {
+                    } catch (ServiceException s) {
                         JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
                     }
                 }

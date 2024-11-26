@@ -76,9 +76,8 @@ public class FormularioIncidencia extends JPanel {
             usuario.setIdUsuario(serviceUsuario.obtenerID(panel.getUsuarioActual().getNombreUsuario()));
             usuario.setNombreUsuario(panel.getUsuarioActual().getNombreUsuario());
             usuario.setPermisos(serviceUsuario.obtenerPermisos(usuario.getIdUsuario()));
-            usuario.setTipo(serviceUsuario.validarTipo(usuario.getIdUsuario()));
-        }
-        catch (ServiceException ex) {
+            usuario.setTipo(panel.getUsuarioActual().getTipo());
+        } catch (ServiceException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -90,8 +89,7 @@ public class FormularioIncidencia extends JPanel {
             try {
                 Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
                 JButtonSalir.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -100,8 +98,7 @@ public class FormularioIncidencia extends JPanel {
             try {
                 Image iconoCerrarSesion = ImageIO.read(getClass().getResource("/iconos/cerrar_sesion.png"));
                 JButtonSalir.setIcon(new ImageIcon(iconoCerrarSesion.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -133,7 +130,6 @@ public class FormularioIncidencia extends JPanel {
         JComboBoxEstados.addItem("En progreso");
         JComboBoxEstados.addItem("Resuelto");
         JComboBoxEstados.addItem("Verificado");
-        JComboBoxEstados.addItem("Cerrado");
         JComboBoxEstados.addItem("Pospuesto");
         JComboBoxEstados.addItem("Rechazado");
 
@@ -154,8 +150,7 @@ public class FormularioIncidencia extends JPanel {
                 else {
                     try {
                         incidencia.setIdIncidencia(serviceIncidencia.obtenerUltimoID() + 1);
-                    }
-                    catch (DAOException ex) {
+                    } catch (DAOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
@@ -172,8 +167,7 @@ public class FormularioIncidencia extends JPanel {
                     serviceIncidencia.guardar(incidencia);
                     JLabelMensaje.setForeground(new Color(50, 191, 64));
                     JLabelMensaje.setText("Incidencia reportada con éxito");
-                }
-                catch (ServiceException s) {
+                } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
@@ -199,8 +193,7 @@ public class FormularioIncidencia extends JPanel {
                         JLabelMensaje.setForeground(new Color(217, 9, 9));
                         JLabelMensaje.setText("La incidencia no fue encontrada");
                     }
-                }
-                catch (DAOException s) {
+                } catch (DAOException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo guardar");
                 }
             }
@@ -278,6 +271,8 @@ public class FormularioIncidencia extends JPanel {
                             }
                         }
 
+                        incidencia.setUsuarioResponsable(panel.getUsuarioActual());
+
                         serviceIncidencia.modificar(incidencia);
 
                         JLabelMensaje.setForeground(new Color(50, 191, 64));
@@ -298,8 +293,7 @@ public class FormularioIncidencia extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panel.mostrar(panel.getReporteIncidencias());
-                }
-                catch (ServiceException s) {
+                } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
             }
@@ -314,8 +308,7 @@ public class FormularioIncidencia extends JPanel {
                     try {
                         panel.mostrar(panel.getMenuAdministrador());
                         return;
-                    }
-                    catch (ServiceException s) {
+                    } catch (ServiceException s) {
                         JOptionPane.showMessageDialog(null,"No se pudo volver atrás");
                     }
                 }
@@ -332,8 +325,7 @@ public class FormularioIncidencia extends JPanel {
                 if (confirmacion != JOptionPane.YES_OPTION) {
                     try {
                         panel.mostrar(panel.getInicioSesion());
-                    }
-                    catch (ServiceException s) {
+                    } catch (ServiceException s) {
                         JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
                     }
                 }

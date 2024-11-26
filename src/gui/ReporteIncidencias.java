@@ -49,8 +49,7 @@ public class ReporteIncidencias extends JPanel {
         try {
             Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
             JButtonVolverAtras.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -67,8 +66,7 @@ public class ReporteIncidencias extends JPanel {
 
                 contenido.addRow(fila);
             }
-        }
-        catch (DAOException e) {
+        } catch (DAOException e) {
             JOptionPane.showMessageDialog(null, "Error");
         }
         add(reporteIncidencias, BorderLayout.NORTH);
@@ -80,8 +78,7 @@ public class ReporteIncidencias extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panelManager.mostrar(panelManager.getFormularioIncidencias());
-                }
-                catch (ServiceException s) {
+                } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir el formulario de incidencias");
                 }
             }

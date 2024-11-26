@@ -72,9 +72,9 @@ public class InicioSesion extends JPanel {
                 try {
                     panel.getUsuarioActual().setNombreUsuario("Invitado");
                     panel.getUsuarioActual().setIdUsuario(0);
+                    panel.getUsuarioActual().setTipo("REGULAR");
                     panel.mostrar(panel.getFormularioIncidencias());
-                }
-                catch (ServiceException s) {
+                } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
             }
@@ -83,28 +83,29 @@ public class InicioSesion extends JPanel {
         JButtonIniciarSesion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Usuario usuarioAux = new Usuario();
-                usuarioAux.setNombreUsuario(JTextFieldUsuario.getText());
+                Usuario usuario = new Usuario();
+                usuario.setNombreUsuario(JTextFieldUsuario.getText());
                 String contrasena = new String(JPasswordFieldContrasena.getPassword());
 
                 try {
-                    if (serviceUsuario.validarUsuario(usuarioAux.getNombreUsuario(), contrasena)) {
-                        panel.getUsuarioActual().setNombreUsuario(usuarioAux.getNombreUsuario());
-                        panel.getUsuarioActual().setIdUsuario(serviceUsuario.obtenerID(usuarioAux.getNombreUsuario()));
-                        usuarioAux.setIdUsuario(serviceUsuario.obtenerID(usuarioAux.getNombreUsuario()));
+                    if (serviceUsuario.validarUsuario(usuario.getNombreUsuario(), contrasena)) {
+                        panel.getUsuarioActual().setNombreUsuario(usuario.getNombreUsuario());
+                        panel.getUsuarioActual().setIdUsuario(serviceUsuario.obtenerID(usuario.getNombreUsuario()));
+                        usuario.setIdUsuario(serviceUsuario.obtenerID(usuario.getNombreUsuario()));
 
                         if (serviceUsuario.validarTipo(panel.getUsuarioActual().getIdUsuario()).equals("ADMINISTRADOR")) {
+                            panel.getUsuarioActual().setTipo("ADMINISTRADOR");
                             panel.mostrar(panel.getMenuAdministrador());
                         }
                         else {
+                            panel.getUsuarioActual().setTipo("REGULAR");
                             panel.mostrar(panel.getFormularioIncidencias());
                         }
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
                     }
-                }
-                catch (ServiceException ex) {
+                } catch (ServiceException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos");
                 }

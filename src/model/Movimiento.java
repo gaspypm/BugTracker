@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Movimiento {
     private int idMovimiento;
+    private Incidencia incidencia;
     private String estadoAnterior;
     private String estadoNuevo;
     private Date fechaCambio;
@@ -67,5 +68,13 @@ public class Movimiento {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public Incidencia getIncidencia() {
+        return incidencia;
+    }
+
+    public void setIncidencia(Incidencia incidencia) {
+        this.incidencia = incidencia;
     }
 }

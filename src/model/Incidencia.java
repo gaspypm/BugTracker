@@ -47,8 +47,8 @@ public class Incidencia {
     }
 
     public void actualizarEstado(Usuario usuario, String nuevoEstado) {
-        this.usuarioResponsable = usuario;
-        this.getMovimientos().add(new Movimiento(this.estado, nuevoEstado, usuario));
+        this.movimientos.add(new Movimiento(this.estado, nuevoEstado, usuario));
+        this.estado = nuevoEstado;
     }
 
     public void cerrar(){
@@ -97,6 +97,58 @@ public class Incidencia {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public int getIDEstado(String estado) {
+        switch(estado) {
+            case "Nuevo":
+                return 1;
+            case "Asignado":
+                return 2;
+            case "En Progreso":
+                return 3;
+            case "Resuelto":
+                return 4;
+            case "Verificado":
+                return 5;
+            case "Cerrado":
+                return 6;
+            case "Reabierto":
+                return 7;
+            case "Pospuesto":
+                return 8;
+            case "Rechazado":
+                return 9;
+            default:
+                System.out.println("El estado de la incidencia es inválido");
+                return 1;
+        }
+    }
+
+    public String getEstadoID(int id_estado) {
+        switch(id_estado) {
+            case 1:
+                return "Nuevo";
+            case 2:
+                return "Asignado";
+            case 3:
+                return "En Progreso";
+            case 4:
+                return "Resuelto";
+            case 5:
+                return "Verificado";
+            case 6:
+                return "Cerrado";
+            case 7:
+                return "Reabierto";
+            case 8:
+                return "Pospuesto";
+            case 9:
+                return "Rechazado";
+            default:
+                System.out.println("El estado de la incidencia es inválido");
+                return "Nuevo";
+        }
     }
 
     public double getTiempoInvertido() {
