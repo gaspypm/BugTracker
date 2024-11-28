@@ -146,8 +146,7 @@ public class EditorPermisos extends JPanel {
             for (Usuario usuario : usuarios) {
                 JComboBoxUsuarios.addItem(usuario.getNombreUsuario());
             }
-        }
-        catch (ServiceException e) {
+        } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
     }

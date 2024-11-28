@@ -15,6 +15,7 @@ public class PanelManager {
     private FormularioUsuario formularioUsuario;
     private FormularioProyecto formularioProyecto;
     private ReporteMovimientos reporteMovimientos;
+    private ReporteIncidenciasPorProyecto reporteIncidenciasPorProyecto;
     private Usuario usuarioActual = new Usuario();
 
     JFrame jFrame;
@@ -55,6 +56,10 @@ public class PanelManager {
             case 8:
                 reporteMovimientos = new ReporteMovimientos(this);
                 mostrar(reporteMovimientos);
+                break;
+            case 9:
+                reporteIncidenciasPorProyecto = new ReporteIncidenciasPorProyecto(this);
+                mostrar(reporteIncidenciasPorProyecto);
                 break;
             default:
                 inicioSesion = new InicioSesion(this);
@@ -103,6 +108,10 @@ public class PanelManager {
 
     public ReporteMovimientos getReporteMovimientos() throws ServiceException {
         return reporteMovimientos = new ReporteMovimientos(this);
+    }
+
+    public ReporteIncidenciasPorProyecto getReporteProyectos() throws ServiceException {
+        return reporteIncidenciasPorProyecto = new ReporteIncidenciasPorProyecto(this);
     }
 
     public Usuario getUsuarioActual() {

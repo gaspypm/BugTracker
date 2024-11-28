@@ -181,6 +181,51 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         }
     }
 
+    public ArrayList<Incidencia> buscarPorProyecto(int idProyecto) throws DAOException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ArrayList<Incidencia> incidencias = new ArrayList<>();
+
+        try {
+            Class.forName(DB_JDBC_DRIVER);
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+            preparedStatement = connection.prepareStatement(
+                    "SELECT INCIDENCIA.*, USUARIO.NOMBRE_USUARIO FROM INCIDENCIA " +
+                            "LEFT JOIN USUARIO ON INCIDENCIA.USUARIO_RESPONSABLE = USUARIO.ID_USUARIO " +
+                            "WHERE INCIDENCIA.PROYECTO = ?");
+            preparedStatement.setInt(1, idProyecto);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Incidencia incidencia = new Incidencia();
+                Usuario usuario = new Usuario();
+
+                incidencia.setIdIncidencia(rs.getInt("ID_INCIDENCIA"));
+                incidencia.setDescripcion(rs.getString("DESCRIPCION"));
+                incidencia.setEstado(incidencia.getEstadoID(rs.getInt("ID_ESTADO")));
+                incidencia.setEstimacionHoras(rs.getDouble("ESTIMACION_HORAS"));
+                incidencia.setTiempoInvertido(rs.getDouble("TIEMPO_INVERTIDO"));
+                usuario.setIdUsuario(rs.getInt("USUARIO_RESPONSABLE"));
+                usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
+                incidencia.setUsuarioResponsable(usuario);
+
+                incidencias.add(incidencia);
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new DAOException("Ocurrió un error en la base de datos");
+        } finally {
+            try {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return incidencias;
+    }
+
     @Override
     public ArrayList<Incidencia> buscarTodos() throws DAOException {
         Connection connection = null;

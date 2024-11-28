@@ -23,12 +23,16 @@ public class ServiceIncidencia {
         }
     }
 
-    public ArrayList<Incidencia> buscarTodos() throws DAOException {
-        return daoIncidencia.buscarTodos();
-    }
-
     public Incidencia buscar(int id) throws DAOException {
         return daoIncidencia.buscar(id);
+    }
+
+    public ArrayList<Incidencia> buscarPorProyecto(int idProyecto) throws DAOException {
+        return daoIncidencia.buscarPorProyecto(idProyecto);
+    }
+
+    public ArrayList<Incidencia> buscarTodos() throws DAOException {
+        return daoIncidencia.buscarTodos();
     }
 
     public int obtenerUltimoID() throws DAOException {

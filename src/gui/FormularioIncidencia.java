@@ -2,9 +2,11 @@ package gui;
 
 import DAO.DAOException;
 import model.Incidencia;
+import model.Proyecto;
 import model.Usuario;
 import service.ServiceIncidencia;
 import service.ServiceException;
+import service.ServiceProyecto;
 import service.ServiceUsuario;
 
 import javax.imageio.ImageIO;
@@ -13,10 +15,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FormularioIncidencia extends JPanel {
     ServiceIncidencia serviceIncidencia;
     ServiceUsuario serviceUsuario;
+    ServiceProyecto serviceProyecto;
     Usuario usuario;
     PanelManager panel;
     JPanel formularioIncidencia;
@@ -33,6 +37,8 @@ public class FormularioIncidencia extends JPanel {
     JComboBox<String> JComboBoxEstados;
     JLabel JLabelTiempoInvertido;
     JTextField JTextFieldTiempoInvertido;
+    JLabel JLabelProyecto;
+    JComboBox<String> JComboBoxProyectos;
     JButton JButtonReportar;
     JButton JButtonMostrarIncidencias;
     JButton JButtonModificar;
@@ -49,9 +55,10 @@ public class FormularioIncidencia extends JPanel {
         // Inicializo todos los elementos de la ventana
         serviceIncidencia = new ServiceIncidencia();
         serviceUsuario = new ServiceUsuario();
+        serviceProyecto = new ServiceProyecto();
         usuario = new Usuario();
         formularioIncidencia = new JPanel();
-        formularioIncidencia.setLayout(new GridLayout(10,2));
+        formularioIncidencia.setLayout(new GridLayout(11,2));
         JLabelBienvenida = new JLabel("Bienvenido, " + panel.getUsuarioActual().getNombreUsuario());
         JLabelID = new JLabel("ID");
         JTextFieldID = new JTextField(30);
@@ -63,6 +70,8 @@ public class FormularioIncidencia extends JPanel {
         JComboBoxEstados = new JComboBox<>();
         JLabelTiempoInvertido = new JLabel("Tiempo Invertido");
         JTextFieldTiempoInvertido = new JTextField();
+        JLabelProyecto = new JLabel("Proyecto");
+        JComboBoxProyectos = new JComboBox<>();
         JButtonReportar = new JButton("Reportar incidencia");
         JButtonModificar = new JButton("Modificar incidencia");
         JButtonCerrar = new JButton("Cerrar incidencia");
@@ -103,6 +112,8 @@ public class FormularioIncidencia extends JPanel {
             }
         }
 
+        cargarListaProyectos();
+
         // Agrego elementos al panel
         formularioIncidencia.add(JLabelBienvenida);
         formularioIncidencia.add(JButtonSalir);
@@ -116,6 +127,8 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia.add(JComboBoxEstados);
         formularioIncidencia.add(JLabelTiempoInvertido);
         formularioIncidencia.add(JTextFieldTiempoInvertido);
+        formularioIncidencia.add(JLabelProyecto);
+        formularioIncidencia.add(JComboBoxProyectos);
         formularioIncidencia.add(JButtonReportar);
         formularioIncidencia.add(JButtonBuscar);
         formularioIncidencia.add(JButtonModificar);
@@ -390,5 +403,16 @@ public class FormularioIncidencia extends JPanel {
 
         setLayout(new BorderLayout());
         add(formularioIncidencia, BorderLayout.CENTER);
+    }
+
+    private void cargarListaProyectos() {
+        try {
+            ArrayList<Proyecto> proyectos = serviceProyecto.buscarTodos();
+            for (Proyecto proyecto : proyectos) {
+                JComboBoxProyectos.addItem(proyecto.getNombreProyecto());
+            }
+        } catch (ServiceException e) {
+            throw new RuntimeException("Error al cargar proyectos");
+        }
     }
 }

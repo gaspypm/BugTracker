@@ -34,7 +34,7 @@ public class MenuAdministrador extends JPanel {
         JButtonCrearIncidencia = new JButton("Crear incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonEditarPermisosUsuario = new JButton("Editar permisos usuario");
-        JButtonReporteProyectos = new JButton("Reporte proyectos");
+        JButtonReporteProyectos = new JButton("Mostrar incidencias por proyecto");
         JButtonHistorialMovimientos = new JButton("Historial movimientos");
         JButtonCerrarSesion = new JButton("Cerrar sesión");
 
@@ -118,7 +118,7 @@ public class MenuAdministrador extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    panel.mostrar(panel.getFormularioProyecto());
+                    panel.mostrar(panel.getReporteProyectos());
                 } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
