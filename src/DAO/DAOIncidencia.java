@@ -55,7 +55,10 @@ public class DAOIncidencia implements IDAO<Incidencia> {
 
             int i = preparedStatement.executeUpdate();
 
-            serviceMovimiento.guardar(new Movimiento("", incidencia.getEstado(), incidencia.getUsuarioResponsable()));
+            Movimiento movimiento = new Movimiento("", incidencia.getEstado(), incidencia.getUsuarioResponsable());
+            movimiento.setIncidencia(incidencia);
+            serviceMovimiento.guardar(movimiento);
+
             System.out.println(i);
         }
         catch (ClassNotFoundException | SQLException e) {

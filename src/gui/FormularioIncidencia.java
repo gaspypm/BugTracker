@@ -151,6 +151,9 @@ public class FormularioIncidencia extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Incidencia incidencia = new Incidencia();
+                Proyecto proyecto = new Proyecto();
+                String nombreProyecto = (String) JComboBoxProyectos.getSelectedItem();
+
 
                 if (!usuario.getPermisos().contains(1)) {
                     JOptionPane.showMessageDialog(null, "No tienes permiso para realizar esta acción");
@@ -174,8 +177,21 @@ public class FormularioIncidencia extends JPanel {
                 incidencia.setEstado(JComboBoxEstados.getSelectedItem().toString());
                 if (!JTextFieldTiempoInvertido.getText().isEmpty())
                     incidencia.setTiempoInvertido(Double.parseDouble(JTextFieldTiempoInvertido.getText()));
-
                 incidencia.setUsuarioResponsable(usuario);
+                if (nombreProyecto != null) {
+                    try {
+                        int idProyecto = serviceProyecto.obtenerID(nombreProyecto);
+                        proyecto.setIdProyecto(idProyecto);
+                        incidencia.setProyecto(proyecto);
+                    } catch (ServiceException ex) {
+                        JOptionPane.showMessageDialog(null, "Error al obtener el proyecto seleccionado");
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione un proyecto");
+                    return;
+                }
+
                 try {
                     serviceIncidencia.guardar(incidencia);
                     JLabelMensaje.setForeground(new Color(50, 191, 64));

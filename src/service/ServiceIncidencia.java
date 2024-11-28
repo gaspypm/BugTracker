@@ -3,7 +3,6 @@ package service;
 import DAO.DAOIncidencia;
 import DAO.DAOException;
 import model.Incidencia;
-import model.Movimiento;
 
 import java.util.ArrayList;
 
