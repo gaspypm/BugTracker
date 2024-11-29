@@ -91,6 +91,10 @@ public class ReporteMovimientos extends JPanel {
         ArrayList<Movimiento> movimientos;
 
         movimientos = service.buscarPorIncidencia(IDIncidencia);
+
+        if(incidencia == null)
+            JOptionPane.showMessageDialog(null, "No se encontró la incidencia");
+
         JLabelDescripcion.setText("ID: " + incidencia.getIdIncidencia() + " | Descripción: " + incidencia.getDescripcion());
 
         for (Movimiento movimiento : movimientos) {

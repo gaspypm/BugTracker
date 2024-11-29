@@ -43,7 +43,7 @@ public class FormularioProyecto extends JPanel {
         serviceUsuario = new ServiceUsuario();
         administrador = new Administrador();
         formularioProyecto = new JPanel();
-        formularioProyecto.setLayout(new GridLayout(5,2));
+        formularioProyecto.setLayout(new GridLayout(6,2));
         JLabelVacio = new JLabel();
         JButtonVolverAtras = new JButton(" Volver atrás");
         JLabelID = new JLabel("ID");
@@ -89,6 +89,7 @@ public class FormularioProyecto extends JPanel {
         formularioProyecto.add(JButtonBuscar);
         formularioProyecto.add(JButtonModificar);
         formularioProyecto.add(JButtonEliminar);
+        formularioProyecto.add(JLabelMensaje);
 
         // Botones
         JButtonVolverAtras.addActionListener(new ActionListener() {

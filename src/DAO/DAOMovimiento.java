@@ -3,10 +3,8 @@ package DAO;
 import io.github.cdimascio.dotenv.Dotenv;
 import model.Incidencia;
 import model.Movimiento;
-import model.Proyecto;
 import model.Usuario;
 
-import service.ServiceException;
 import service.ServiceUsuario;
 import service.ServiceIncidencia;
 
@@ -39,7 +37,11 @@ public class DAOMovimiento implements IDAO<Movimiento> {
             connection = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD);
             preparedStatement = connection.prepareStatement("INSERT INTO MOVIMIENTO (ID_INCIDENCIA, ID_ESTADO_ANTERIOR, ID_ESTADO_NUEVO, FECHA_CAMBIO, USUARIO_RESPONSABLE) VALUES (?,?,?,?,?)");
             preparedStatement.setInt(1, movimiento.getIncidencia().getIdIncidencia());
-            preparedStatement.setInt(2, movimiento.getEstadoAnterior().isEmpty() ? null : incidencia.getIDEstado(movimiento.getEstadoAnterior()));
+            if (movimiento.getEstadoAnterior() == null || movimiento.getEstadoAnterior().isEmpty()) {
+                preparedStatement.setString(2, "");
+            } else {
+                preparedStatement.setInt(2, incidencia.getIDEstado(movimiento.getEstadoAnterior()));
+            }
             preparedStatement.setInt(3, incidencia.getIDEstado(movimiento.getEstadoNuevo()));
             preparedStatement.setDate(4, new java.sql.Date(movimiento.getFechaCambio().getTime()));
             preparedStatement.setInt(5, movimiento.getUsuario().getIdUsuario());

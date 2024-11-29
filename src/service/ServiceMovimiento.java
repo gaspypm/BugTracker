@@ -2,12 +2,8 @@ package service;
 
 import DAO.DAOException;
 import DAO.DAOMovimiento;
-import model.Incidencia;
 import model.Movimiento;
-import model.Proyecto;
-import model.Usuario;
 
-import java.sql.*;
 import java.util.ArrayList;
 
 public class ServiceMovimiento {
