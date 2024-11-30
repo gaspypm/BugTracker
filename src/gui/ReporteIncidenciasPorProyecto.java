@@ -100,7 +100,7 @@ public class ReporteIncidenciasPorProyecto extends JPanel {
                 try {
                     panelManager.mostrar(panelManager.getMenuAdministrador());
                 } catch (ServiceException s) {
-                    JOptionPane.showMessageDialog(null,"No se pudo abrir el formulario de incidencias");
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir el menú de administrador");
                 }
             }
         });
