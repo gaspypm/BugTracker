@@ -22,7 +22,7 @@ public class ReporteIncidenciasPorProyecto extends JPanel {
     private ServiceIncidencia serviceIncidencia;
     private Incidencia incidencia;
     private PanelManager panelManager;
-    private JPanel reporteProyectos;
+    private JPanel reporteIncidenciasPorProyecto;
     private JTable JTable;
     private DefaultTableModel contenido;
     private JScrollPane scrollPane;
@@ -40,8 +40,8 @@ public class ReporteIncidenciasPorProyecto extends JPanel {
     public void armarTablaReporte() {
         ServiceProyecto service = new ServiceProyecto();
         setLayout(new BorderLayout());
-        reporteProyectos = new JPanel();
-        reporteProyectos.setLayout(new BorderLayout());
+        reporteIncidenciasPorProyecto = new JPanel();
+        reporteIncidenciasPorProyecto.setLayout(new BorderLayout());
         contenido = new DefaultTableModel();
         JTable = new JTable(contenido);
         scrollPane = new JScrollPane();
@@ -61,9 +61,9 @@ public class ReporteIncidenciasPorProyecto extends JPanel {
         headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         headerPanel.add(JComboBoxProyectos);
         headerPanel.add(JButtonVolverAtras);
-        reporteProyectos.add(headerPanel, BorderLayout.NORTH);
+        reporteIncidenciasPorProyecto.add(headerPanel, BorderLayout.NORTH);
 
-        add(reporteProyectos, BorderLayout.NORTH);
+        add(reporteIncidenciasPorProyecto, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         cargarListaProyectos();
@@ -76,7 +76,7 @@ public class ReporteIncidenciasPorProyecto extends JPanel {
             throw new RuntimeException(e);
         }
 
-        add(reporteProyectos, BorderLayout.NORTH);
+        add(reporteIncidenciasPorProyecto, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.SOUTH);
 
         JComboBoxProyectos.addActionListener(new ActionListener() {

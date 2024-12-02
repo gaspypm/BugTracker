@@ -29,4 +29,3 @@ bin/
 .DS_Store
 
 .env
-/src/gui/ReporteProyectos.java

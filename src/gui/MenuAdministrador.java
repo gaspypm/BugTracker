@@ -16,9 +16,10 @@ public class MenuAdministrador extends JPanel {
     JButton JButtonCrearIncidencia;
     JButton JButtonMostrarIncidencias;
     JButton JButtonEditarPermisosUsuario;
-    JButton JButtonCerrarSesion;
-    JButton JButtonReporteProyectos;
+    JButton JButtonReporteIncidenciasPorProyecto;
     JButton JButtonHistorialMovimientos;
+    JButton JButtonReporteProyectos;
+    JButton JButtonCerrarSesion;
 
     public MenuAdministrador(PanelManager panel) {
         this.panel = panel;
@@ -28,14 +29,15 @@ public class MenuAdministrador extends JPanel {
     public void armarPanelAdministrador() {
         // Inicializo todos los elementos de la ventana
         menuAdministrador = new JPanel();
-        menuAdministrador.setLayout(new GridLayout(4,2));
+        menuAdministrador.setLayout(new GridLayout(5,2));
         JButtonCrearUsuario = new JButton("Crear usuario");
         JButtonCrearProyecto = new JButton("Crear proyecto");
         JButtonCrearIncidencia = new JButton("Crear incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonEditarPermisosUsuario = new JButton("Editar permisos usuario");
-        JButtonReporteProyectos = new JButton("Mostrar incidencias por proyecto");
+        JButtonReporteIncidenciasPorProyecto = new JButton("Mostrar incidencias por proyecto");
         JButtonHistorialMovimientos = new JButton("Historial movimientos");
+        JButtonReporteProyectos = new JButton("Reporte proyectos");
         JButtonCerrarSesion = new JButton("Cerrar sesión");
 
         // Estilos
@@ -53,8 +55,9 @@ public class MenuAdministrador extends JPanel {
         menuAdministrador.add(JButtonCrearIncidencia);
         menuAdministrador.add(JButtonMostrarIncidencias);
         menuAdministrador.add(JButtonCrearProyecto);
-        menuAdministrador.add(JButtonReporteProyectos);
+        menuAdministrador.add(JButtonReporteIncidenciasPorProyecto);
         menuAdministrador.add(JButtonHistorialMovimientos);
+        menuAdministrador.add(JButtonReporteProyectos);
         menuAdministrador.add(JButtonCerrarSesion);
 
         // Botones
@@ -114,11 +117,11 @@ public class MenuAdministrador extends JPanel {
             }
         });
 
-        JButtonReporteProyectos.addActionListener(new ActionListener() {
+        JButtonReporteIncidenciasPorProyecto.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    panel.mostrar(panel.getReporteProyectos());
+                    panel.mostrar(panel.getReporteIncidenciasPorProyecto());
                 } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
                 }
@@ -130,6 +133,18 @@ public class MenuAdministrador extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     panel.mostrar(panel.getReporteMovimientos());
+                } catch (ServiceException s) {
+                    s.printStackTrace();
+                    JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");
+                }
+            }
+        });
+
+        JButtonReporteProyectos.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    panel.mostrar(panel.getReporteProyectos());
                 } catch (ServiceException s) {
                     s.printStackTrace();
                     JOptionPane.showMessageDialog(null,"No se pudo abrir la pantalla");

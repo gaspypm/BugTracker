@@ -17,7 +17,6 @@ import service.ServiceMovimiento;
 import service.ServiceIncidencia;
 
 public class ReporteMovimientos extends JPanel {
-    private ServiceIncidencia serviceIncidencia;
     private ServiceMovimiento serviceMovimiento;
     private PanelManager panelManager;
     private JPanel reporteMovimientos;
@@ -30,7 +29,6 @@ public class ReporteMovimientos extends JPanel {
 
     public ReporteMovimientos(PanelManager panelManager) {
         this.panelManager = panelManager;
-        this.serviceIncidencia = new ServiceIncidencia();
         this.serviceMovimiento = new ServiceMovimiento();
         armarTablaReporte();
         mostrarOpciones();
@@ -42,7 +40,6 @@ public class ReporteMovimientos extends JPanel {
         contenido = new DefaultTableModel();
         JTable = new JTable(contenido);
         scrollPane = new JScrollPane(JTable);
-
         JButtonVolverAtras = new JButton("Volver atrás");
         JLabelDescripcion = new JLabel("");
 
@@ -61,7 +58,7 @@ public class ReporteMovimientos extends JPanel {
         add(reporteMovimientos, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Estilo del botón "Volver atrás"
+        // Estilos
         try {
             Image iconoVolverAtras = ImageIO.read(getClass().getResource("/iconos/volver_atras.png"));
             JButtonVolverAtras.setIcon(new ImageIcon(iconoVolverAtras.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
@@ -69,7 +66,7 @@ public class ReporteMovimientos extends JPanel {
             throw new RuntimeException(e);
         }
 
-        // Acción del botón "Volver atrás"
+        // Botones
         JButtonVolverAtras.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
