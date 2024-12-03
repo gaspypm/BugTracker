@@ -14,21 +14,19 @@ import java.util.ArrayList;
 
 import service.ServiceException;
 import service.ServiceMovimiento;
-import service.ServiceIncidencia;
 
 public class ReporteMovimientos extends JPanel {
     private ServiceMovimiento serviceMovimiento;
-    private PanelManager panelManager;
+    private PanelManager panel;
     private JPanel reporteMovimientos;
     private JTable JTable;
     private DefaultTableModel contenido;
     private JScrollPane scrollPane;
     private JButton JButtonVolverAtras;
     private JLabel JLabelDescripcion;
-    private boolean mostrarTodos;
 
     public ReporteMovimientos(PanelManager panelManager) {
-        this.panelManager = panelManager;
+        this.panel = panelManager;
         this.serviceMovimiento = new ServiceMovimiento();
         armarTablaReporte();
         mostrarOpciones();
@@ -50,11 +48,11 @@ public class ReporteMovimientos extends JPanel {
         contenido.addColumn("Fecha");
 
         // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.add(JButtonVolverAtras);
-        headerPanel.add(JLabelDescripcion);
+        JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        header.add(JButtonVolverAtras);
+        header.add(JLabelDescripcion);
 
-        reporteMovimientos.add(headerPanel, BorderLayout.NORTH);
+        reporteMovimientos.add(header, BorderLayout.NORTH);
         add(reporteMovimientos, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -71,7 +69,7 @@ public class ReporteMovimientos extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    panelManager.mostrar(panelManager.getMenuAdministrador());
+                    panel.mostrar(panel.getMenuAdministrador());
                 } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir el menú de administrador");
                 }
@@ -80,15 +78,15 @@ public class ReporteMovimientos extends JPanel {
     }
 
     private void mostrarOpciones() {
-        Object[] opciones = {"Mostrar todos", "Buscar", "Cancelar"};
+        Object[] opciones = {"Mostrar todos", "Buscar", "Cancelar",};
 
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Ingrese el ID de incidencia"));
+        JPanel consulta = new JPanel();
+        consulta.add(new JLabel("Ingrese el ID de incidencia"));
         JTextField textField = new JTextField(10);
-        panel.add(textField);
+        consulta.add(textField);
 
         int result = JOptionPane.showOptionDialog(
-                null, panel, "Buscar movimientos",
+                null, consulta, "Buscar movimientos",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, opciones, null
         );
@@ -96,7 +94,7 @@ public class ReporteMovimientos extends JPanel {
         try {
             if (result == 0) { // Mostrar todos
                 ArrayList<Movimiento> movimientos = serviceMovimiento.buscarTodos();
-                mostrarMovimientos(movimientos);
+                mostrarTodos(movimientos);
             } else if (result == 1) { // Buscar por ID
                 String idTexto = textField.getText().trim();
                 if (!idTexto.isEmpty()) {
@@ -110,11 +108,12 @@ public class ReporteMovimientos extends JPanel {
                 } else {
                     JOptionPane.showMessageDialog(null, "Por favor, ingrese un ID válido.");
                 }
-            } else if (result == 2 || result == JOptionPane.CLOSED_OPTION) { // Cancelar
-                JOptionPane.showMessageDialog(null, "Operación cancelada.");
+            } else if (result == 2) { // Cancelar
+                this.panel.mostrar(this.panel.getMenuAdministrador());
+                return;
             }
         } catch (DAOException ex) {
-            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Error");
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         }
@@ -133,11 +132,24 @@ public class ReporteMovimientos extends JPanel {
         }
     }
 
-    private void volverAlMenu() {
-        try {
-            panelManager.mostrar(panelManager.getMenuAdministrador());
-        } catch (ServiceException ex) {
-            JOptionPane.showMessageDialog(null, "No se pudo volver al menú: " + ex.getMessage());
+    private void mostrarTodos(ArrayList<Movimiento> movimientos) {
+        contenido.setRowCount(0);
+
+        if (contenido.getColumnCount() < 6) {
+            contenido.addColumn("ID Incidencia");
+            contenido.addColumn("Descripción");
+        }
+
+        for (Movimiento movimiento : movimientos) {
+            contenido.addRow(new Object[]{
+                    movimiento.getIdMovimiento(),
+                    movimiento.getEstadoAnterior(),
+                    movimiento.getEstadoNuevo(),
+                    movimiento.getUsuario().getNombreUsuario(),
+                    movimiento.getFechaCambio(),
+                    movimiento.getIncidencia().getIdIncidencia(),
+                    movimiento.getIncidencia().getDescripcion()
+            });
         }
     }
 }

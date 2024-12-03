@@ -35,16 +35,17 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         else {
             try {
                 idIncidencia = obtenerUltimoID() + 1;
-            }
-            catch (DAOException e) {
+            } catch (DAOException e) {
                 throw new RuntimeException(e);
             }
         }
 
         try {
             Class.forName(DB_JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("INSERT INTO INCIDENCIA (ID_INCIDENCIA, DESCRIPCION, ESTIMACION_HORAS, ID_ESTADO, TIEMPO_INVERTIDO, USUARIO_RESPONSABLE) VALUES (?,?,?,?,?,?)");
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            preparedStatement = connection.prepareStatement(
+                    "INSERT INTO INCIDENCIA (ID_INCIDENCIA, DESCRIPCION, ESTIMACION_HORAS, ID_ESTADO, TIEMPO_INVERTIDO, USUARIO_RESPONSABLE, PROYECTO) " +
+                            "VALUES (?,?,?,?,?,?,?)");
 
             preparedStatement.setInt(1, idIncidencia);
             preparedStatement.setString(2, incidencia.getDescripcion());
@@ -52,6 +53,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             preparedStatement.setInt(4, incidencia.getIDEstado(incidencia.getEstado()));
             preparedStatement.setDouble(5, incidencia.getTiempoInvertido());
             preparedStatement.setInt(6, incidencia.getUsuarioResponsable().getIdUsuario());
+            preparedStatement.setInt(7, incidencia.getProyecto().getIdProyecto());
 
             int i = preparedStatement.executeUpdate();
 
@@ -60,19 +62,18 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             serviceMovimiento.guardar(movimiento);
 
             System.out.println(i);
-        }
-        catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
         } catch (ServiceException e) {
             throw new RuntimeException(e);
         } finally {
             try {
-                preparedStatement.close();
-            }
-            catch(SQLException e) {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                throw new DAOException("Error");
+                throw new DAOException("Error al cerrar la conexión");
             }
         }
     }
@@ -93,12 +94,14 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             }
 
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET DESCRIPCION = ?, ESTIMACION_HORAS = ?, ID_ESTADO = ?, TIEMPO_INVERTIDO = ? WHERE ID_INCIDENCIA = ?");
+            preparedStatement = connection.prepareStatement("UPDATE INCIDENCIA SET DESCRIPCION = ?, ESTIMACION_HORAS = ?, ID_ESTADO = ?, TIEMPO_INVERTIDO = ?, PROYECTO = ? WHERE ID_INCIDENCIA = ?");
+
             preparedStatement.setString(1, incidencia.getDescripcion());
             preparedStatement.setDouble(2, incidencia.getEstimacionHoras());
             preparedStatement.setInt(3, incidencia.getIDEstado(incidencia.getEstado()));
             preparedStatement.setDouble(4, incidencia.getTiempoInvertido());
-            preparedStatement.setInt(5, incidencia.getIdIncidencia());
+            preparedStatement.setInt(5, incidencia.getProyecto().getIdProyecto());
+            preparedStatement.setInt(6, incidencia.getIdIncidencia());
 
             int i = preparedStatement.executeUpdate();
 
@@ -110,10 +113,9 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             throw new RuntimeException(e);
         } finally {
             try {
-                if (preparedStatement != null)
-                    preparedStatement.close();
-            }
-            catch (SQLException e) {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
                 throw new DAOException("Error al cerrar la conexión");
             }
@@ -156,30 +158,45 @@ public class DAOIncidencia implements IDAO<Incidencia> {
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            preparedStatement = connection.prepareStatement("SELECT * FROM INCIDENCIA WHERE ID_INCIDENCIA = ?");
+            preparedStatement = connection.prepareStatement(
+                    "SELECT INCIDENCIA.*, PROYECTO.ID_PROYECTO, PROYECTO.NOMBRE_PROYECTO, " +
+                            "USUARIO.ID_USUARIO, USUARIO.NOMBRE_USUARIO " +
+                            "FROM INCIDENCIA " +
+                            "LEFT JOIN PROYECTO ON INCIDENCIA.PROYECTO = PROYECTO.ID_PROYECTO " +
+                            "LEFT JOIN USUARIO ON INCIDENCIA.USUARIO_RESPONSABLE = USUARIO.ID_USUARIO " +
+                            "WHERE ID_INCIDENCIA = ?");
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 incidenciaAux = new Incidencia();
+                Proyecto proyecto = new Proyecto();
+                Usuario usuario = new Usuario();
+
                 incidenciaAux.setIdIncidencia(rs.getInt("ID_INCIDENCIA"));
                 incidenciaAux.setDescripcion(rs.getString("DESCRIPCION"));
                 incidenciaAux.setEstimacionHoras(rs.getDouble("ESTIMACION_HORAS"));
                 incidenciaAux.setEstado(incidenciaAux.getEstadoID(rs.getInt("ID_ESTADO")));
                 incidenciaAux.setTiempoInvertido(rs.getDouble("TIEMPO_INVERTIDO"));
+
+                proyecto.setIdProyecto(rs.getInt("ID_PROYECTO"));
+                proyecto.setNombreProyecto(rs.getString("NOMBRE_PROYECTO"));
+                incidenciaAux.setProyecto(proyecto);
+
+                usuario.setIdUsuario(rs.getInt("ID_USUARIO"));
+                usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
+                incidenciaAux.setUsuarioResponsable(usuario);
             }
             return incidenciaAux;
-        }
-        catch (ClassNotFoundException|SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             throw new DAOException("Error al acceder a la base de datos");
-        }
-        finally {
+        } finally {
             try {
-                preparedStatement.close();
-            }
-            catch(SQLException e) {
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                throw new DAOException("Error");
+                throw new DAOException("Error al cerrar la conexión");
             }
         }
     }
@@ -194,8 +211,10 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
             preparedStatement = connection.prepareStatement(
-                    "SELECT INCIDENCIA.*, USUARIO.NOMBRE_USUARIO FROM INCIDENCIA " +
+                    "SELECT INCIDENCIA.*, USUARIO.NOMBRE_USUARIO, PROYECTO.NOMBRE_PROYECTO " +
+                            "FROM INCIDENCIA " +
                             "LEFT JOIN USUARIO ON INCIDENCIA.USUARIO_RESPONSABLE = USUARIO.ID_USUARIO " +
+                            "LEFT JOIN PROYECTO ON INCIDENCIA.PROYECTO = PROYECTO.ID_PROYECTO " +
                             "WHERE INCIDENCIA.PROYECTO = ?");
             preparedStatement.setInt(1, idProyecto);
             ResultSet rs = preparedStatement.executeQuery();
@@ -203,6 +222,7 @@ public class DAOIncidencia implements IDAO<Incidencia> {
             while (rs.next()) {
                 Incidencia incidencia = new Incidencia();
                 Usuario usuario = new Usuario();
+                Proyecto proyecto = new Proyecto();
 
                 incidencia.setIdIncidencia(rs.getInt("ID_INCIDENCIA"));
                 incidencia.setDescripcion(rs.getString("DESCRIPCION"));
@@ -211,7 +231,11 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 incidencia.setTiempoInvertido(rs.getDouble("TIEMPO_INVERTIDO"));
                 usuario.setIdUsuario(rs.getInt("USUARIO_RESPONSABLE"));
                 usuario.setNombreUsuario(rs.getString("NOMBRE_USUARIO"));
+                proyecto.setIdProyecto(rs.getInt("PROYECTO"));
+                proyecto.setNombreProyecto(rs.getString("NOMBRE_PROYECTO"));
+
                 incidencia.setUsuarioResponsable(usuario);
+                incidencia.setProyecto(proyecto);
 
                 incidencias.add(incidencia);
             }
@@ -225,7 +249,6 @@ public class DAOIncidencia implements IDAO<Incidencia> {
                 e.printStackTrace();
             }
         }
-
         return incidencias;
     }
 

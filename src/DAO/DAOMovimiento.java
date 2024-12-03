@@ -27,11 +27,6 @@ public class DAOMovimiento implements IDAO<Movimiento> {
         PreparedStatement preparedStatement = null;
         Incidencia incidencia = new Incidencia();
 
-        System.out.println("ID Usuario DAOMovimiento");
-        System.out.println(movimiento.getUsuario().getIdUsuario());
-
-        System.out.println(movimiento.getEstadoAnterior().isEmpty() ? null : movimiento.getEstadoAnterior());
-
         try {
             Class.forName(DB_JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD);

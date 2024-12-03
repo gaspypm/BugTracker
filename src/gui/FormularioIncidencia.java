@@ -23,8 +23,8 @@ public class FormularioIncidencia extends JPanel {
     ServiceProyecto serviceProyecto;
     Usuario usuario;
     PanelManager panel;
+
     JPanel formularioIncidencia;
-    JLabel JLabelVacio;
     JLabel JLabelBienvenida;
     JButton JButtonSalir;
     JLabel JLabelID;
@@ -44,6 +44,7 @@ public class FormularioIncidencia extends JPanel {
     JButton JButtonModificar;
     JButton JButtonCerrar;
     JButton JButtonBuscar;
+    JButton JButtonVaciar;
     JLabel JLabelMensaje;
 
     public FormularioIncidencia(PanelManager panel) throws ServiceException {
@@ -77,7 +78,7 @@ public class FormularioIncidencia extends JPanel {
         JButtonCerrar = new JButton("Cerrar incidencia");
         JButtonMostrarIncidencias = new JButton("Mostrar incidencias");
         JButtonBuscar = new JButton("Buscar incidencia");
-        JLabelVacio = new JLabel();
+        JButtonVaciar = new JButton("Vaciar");
         JLabelMensaje = new JLabel("");
 
         // Guardo el usuario actual
@@ -134,7 +135,7 @@ public class FormularioIncidencia extends JPanel {
         formularioIncidencia.add(JButtonModificar);
         formularioIncidencia.add(JButtonCerrar);
         formularioIncidencia.add(JButtonMostrarIncidencias);
-        formularioIncidencia.add(JLabelVacio);
+        formularioIncidencia.add(JButtonVaciar);
         formularioIncidencia.add(JLabelMensaje);
 
         // Agrego estados de incidencia a JComboBoxEstados
@@ -231,7 +232,7 @@ public class FormularioIncidencia extends JPanel {
         JButtonModificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Incidencia incidencia = new Incidencia();
+                Incidencia incidencia;
                 Object[] opciones = {"Sí", "No"};
 
                 if (panel.getUsuarioActual().getNombreUsuario().equals("Invitado")) {
@@ -328,39 +329,6 @@ public class FormularioIncidencia extends JPanel {
             }
         });
 
-        JButtonSalir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object[] opciones = {"No", "Sí"};
-
-                if(usuario.getTipo().equals("ADMINISTRADOR")) {
-                    try {
-                        panel.mostrar(panel.getMenuAdministrador());
-                        return;
-                    } catch (ServiceException s) {
-                        JOptionPane.showMessageDialog(null,"No se pudo volver atrás");
-                    }
-                }
-
-                int confirmacion = JOptionPane.showOptionDialog(
-                        null,
-                        "¿Está seguro que desea cerrar sesión?",
-                        "Confirmación",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.CANCEL_OPTION,
-                        null,
-                        opciones,
-                        opciones[0]);
-                if (confirmacion != JOptionPane.YES_OPTION) {
-                    try {
-                        panel.mostrar(panel.getInicioSesion());
-                    } catch (ServiceException s) {
-                        JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
-                    }
-                }
-            }
-        });
-
         JButtonCerrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -413,6 +381,50 @@ public class FormularioIncidencia extends JPanel {
                 } else {
                     JLabelMensaje.setForeground(new Color(217, 9, 9));
                     JLabelMensaje.setText("Operación cancelada");
+                }
+            }
+        });
+
+        JButtonVaciar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JTextFieldID.setText("");
+                JTextFieldDescripcion.setText("");
+                JTextFieldEstimacionHoras.setText("");
+                JTextFieldTiempoInvertido.setText("");
+                JLabelMensaje.setText("");
+            }
+        });
+
+        JButtonSalir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object[] opciones = {"No", "Sí"};
+
+                if(usuario.getTipo().equals("ADMINISTRADOR")) {
+                    try {
+                        panel.mostrar(panel.getMenuAdministrador());
+                        return;
+                    } catch (ServiceException s) {
+                        JOptionPane.showMessageDialog(null,"No se pudo volver atrás");
+                    }
+                }
+
+                int confirmacion = JOptionPane.showOptionDialog(
+                        null,
+                        "¿Está seguro que desea cerrar sesión?",
+                        "Confirmación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.CANCEL_OPTION,
+                        null,
+                        opciones,
+                        opciones[0]);
+                if (confirmacion != JOptionPane.YES_OPTION) {
+                    try {
+                        panel.mostrar(panel.getInicioSesion());
+                    } catch (ServiceException s) {
+                        JOptionPane.showMessageDialog(null,"No se pudo cerrar sesión");
+                    }
                 }
             }
         });

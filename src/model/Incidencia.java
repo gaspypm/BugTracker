@@ -101,24 +101,15 @@ public class Incidencia {
 
     public int getIDEstado(String estado) {
         switch(estado) {
-            case "Nuevo":
-                return 1;
-            case "Asignado":
-                return 2;
-            case "En Progreso":
-                return 3;
-            case "Resuelto":
-                return 4;
-            case "Verificado":
-                return 5;
-            case "Cerrado":
-                return 6;
-            case "Reabierto":
-                return 7;
-            case "Pospuesto":
-                return 8;
-            case "Rechazado":
-                return 9;
+            case "Nuevo": return 1;
+            case "Asignado": return 2;
+            case "En Progreso": return 3;
+            case "Resuelto": return 4;
+            case "Verificado": return 5;
+            case "Cerrado": return 6;
+            case "Reabierto": return 7;
+            case "Pospuesto": return 8;
+            case "Rechazado": return 9;
             default:
                 System.out.println("El estado de la incidencia es inválido");
                 return 1;
@@ -127,24 +118,15 @@ public class Incidencia {
 
     public String getEstadoID(int id_estado) {
         switch(id_estado) {
-            case 1:
-                return "Nuevo";
-            case 2:
-                return "Asignado";
-            case 3:
-                return "En Progreso";
-            case 4:
-                return "Resuelto";
-            case 5:
-                return "Verificado";
-            case 6:
-                return "Cerrado";
-            case 7:
-                return "Reabierto";
-            case 8:
-                return "Pospuesto";
-            case 9:
-                return "Rechazado";
+            case 1: return "Nuevo";
+            case 2: return "Asignado";
+            case 3: return "En Progreso";
+            case 4: return "Resuelto";
+            case 5: return "Verificado";
+            case 6: return "Cerrado";
+            case 7: return "Reabierto";
+            case 8: return "Pospuesto";
+            case 9: return "Rechazado";
             default:
                 System.out.println("El estado de la incidencia es inválido");
                 return "Nuevo";

@@ -15,15 +15,15 @@ import model.Incidencia;
 import service.ServiceException;
 
 public class ReporteIncidencias extends JPanel {
-    private PanelManager panelManager;
+    private PanelManager panel;
     private JPanel reporteIncidencias;
     private JTable JTable;
     private DefaultTableModel contenido;
     private JScrollPane scrollPane;
     private JButton JButtonVolverAtras;
 
-    public ReporteIncidencias(PanelManager panelManager) throws ServiceException {
-        this.panelManager = panelManager;
+    public ReporteIncidencias(PanelManager panel) throws ServiceException {
+        this.panel = panel;
         armarTablaReporte();
     }
 
@@ -43,6 +43,7 @@ public class ReporteIncidencias extends JPanel {
         contenido.addColumn("Estado");
         contenido.addColumn("Tiempo Invertido");
         contenido.addColumn("Usuario");
+        contenido.addColumn("Proyecto");
         reporteIncidencias.add(JButtonVolverAtras);
 
         // Estilos
@@ -56,13 +57,14 @@ public class ReporteIncidencias extends JPanel {
         try {
             ArrayList<Incidencia> incidencias = service.buscarTodos();
             for(Incidencia incidencia:incidencias) {
-                Object [] fila = new Object[6];
+                Object [] fila = new Object[7];
                 fila[0] = incidencia.getIdIncidencia();
                 fila[1] = incidencia.getDescripcion();
                 fila[2] = incidencia.getEstimacionHoras();
                 fila[3] = incidencia.getEstado();
                 fila[4] = incidencia.getTiempoInvertido();
                 fila[5] = incidencia.getUsuarioResponsable().getNombreUsuario();
+                fila[6] = incidencia.getProyecto().getNombreProyecto();
 
                 contenido.addRow(fila);
             }
@@ -77,7 +79,7 @@ public class ReporteIncidencias extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    panelManager.mostrar(panelManager.getFormularioIncidencias());
+                    panel.mostrar(panel.getFormularioIncidencias());
                 } catch (ServiceException s) {
                     JOptionPane.showMessageDialog(null,"No se pudo abrir el formulario de incidencias");
                 }
