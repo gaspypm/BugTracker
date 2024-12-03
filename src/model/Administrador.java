@@ -26,8 +26,4 @@ public class Administrador extends Usuario {
         Proyecto nuevoProyecto = new Proyecto(nombreProyecto);
         proyectos.add(nuevoProyecto);
     }
-
-    public void obtenerReporte() {
-
-    }
 }

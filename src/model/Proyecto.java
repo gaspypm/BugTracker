@@ -18,10 +18,6 @@ public class Proyecto {
         this.incidencias = new ArrayList<>();
     }
 
-    public void agregarIncidencia(int idIncidencia, String descripcionIncidencia, Usuario usuario, double estimacionHoras) {
-        this.incidencias.add(new Incidencia(descripcionIncidencia, usuario, estimacionHoras));
-    }
-
     public int getIdProyecto() {
         return idProyecto;
     }

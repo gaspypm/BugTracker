@@ -111,7 +111,6 @@ public class Incidencia {
             case "Pospuesto": return 8;
             case "Rechazado": return 9;
             default:
-                System.out.println("El estado de la incidencia es inválido");
                 return 1;
         }
     }
@@ -128,7 +127,6 @@ public class Incidencia {
             case 8: return "Pospuesto";
             case 9: return "Rechazado";
             default:
-                System.out.println("El estado de la incidencia es inválido");
                 return "Nuevo";
         }
     }
